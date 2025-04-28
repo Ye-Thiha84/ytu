@@ -8,7 +8,4 @@ export default defineConfig({
   },
 
   integrations: [icon()],
-  experimental: {
-    viewTransitions: true,
-  },
 });
