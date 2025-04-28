@@ -1,0 +1,29 @@
+---
+import { Icon } from 'astro-icon/components';
+import { NavData } from '../data/NavData';
+---
+
+<nav aria-label="Primary">
+  <div class="navbar bg-black text-white flex items-center justify-between p-4">
+    <a href="/" class="logomark" aria-label="Go home">
+      <Icon name="placeHolder" width="60" class="text-white" />
+    </a>
+    <ul class="flex space-x-6">
+      {NavData && NavData.length > 0 ? (
+        NavData.map(item => (
+          <li>
+            <a 
+              href={item.path} 
+              class="text-white hover:text-gray-300 focus:text-gray-300 transition-colors"
+              data-astro-transition="fade"
+            >
+              {item.name}
+            </a>
+          </li>
+        ))
+      ) : (
+        <li class="text-gray-400">Navigation links unavailable</li>
+      )}
+    </ul>
+  </div>
+</nav>
