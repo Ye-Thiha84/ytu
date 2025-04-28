@@ -3,11 +3,11 @@ import Navbar from "../components/Navbar.astro";
 import Foot from "../components/Foot.astro";
 import "../styles/global.css";
 
-// Props for dynamic title and optional metadata
 const {
   title = "My Astro Site",
   description = "A simple Astro site with a custom layout",
   class: className,
+  showNavbar = true,
 } = Astro.props;
 ---
 
@@ -18,7 +18,6 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <title>{title}</title>
-    <!-- Favicon (optional, customize path if needed) -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -26,11 +25,23 @@ const {
       href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
-    <!-- Global CSS is imported in frontmatter, so no need to link here -->
+    <style>
+      :global(:root){
+        --bg-color:#fff;
+        --text-color:#1E3A8A;
+      }
+      :global(body) {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding:0;
+        transition: all 0.3s ease;
+      }
+    </style>
   </head>
   <body>
     <div class:list={["min-h-screen flex flex-col", className]}>
-      <Navbar />
+      {showNavbar && <Navbar />}
       <main class="flex-grow">
         <slot />
       </main>

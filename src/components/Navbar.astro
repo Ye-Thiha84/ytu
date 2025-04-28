@@ -4,17 +4,34 @@ import { NavData } from '../data/NavData';
 ---
 
 <nav aria-label="Primary">
-  <div class="navbar bg-black text-white flex items-center justify-between p-4">
-    <a href="/" class="logomark" aria-label="Go home">
-      <Icon name="placeHolder" width="60" class="text-white" />
+  <div class="navbar flex items-center justify-between px-6 py-4 bg-white">
+    <!-- Logo -->
+    <a href="/" class="text-2xl font-bold" style="color: var(--text-color);" aria-label="Go home">
+      YU Hub
     </a>
-    <ul class="flex space-x-6">
+
+    <!-- Hamburger Button (Mobile Only) -->
+    <button 
+      class="group relative inline-block w-[44px] h-[45px] p-[5px] md:hidden mb-[2px]" 
+      aria-label="Toggle navigation menu" 
+      aria-expanded="false" 
+      onclick="this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); document.getElementById('mobile-menu').classList.toggle('hidden');"
+    >
+      <span
+        class="mx-[auto] my-[0] relative top-[12px] w-[30px] h-[6px] block [transition-property:margin,_width] group-hover:w-[20px] duration-200 after:absolute after:content-[''] after:mt-[12px] after:w-[30px] after:h-[6px] after:block after:left-[0] after:[transition-property:margin,_left] after:duration-200 group-hover:after:mt-[6px] group-hover:after:-left-[5px] before:absolute before:content-[''] before:-mt-[12px] before:w-[30px] before:h-[6px] before:block before:left-[0] before:[transition-property:margin,_width,_left] before:duration-200 group-hover:before:-mt-[6px] group-hover:before:w-[10px] group-hover:before:left-[5px]"
+        style="background-color: var(--text-color);"
+      ></span>
+    </button>
+
+    <!-- Desktop Nav Items -->
+    <ul class="hidden md:flex space-x-8">
       {NavData && NavData.length > 0 ? (
         NavData.map(item => (
           <li>
             <a 
               href={item.path} 
-              class="text-white hover:text-gray-300 focus:text-gray-300 transition-colors"
+              class="text-sm font-semibold transition-colors hover:underline focus:underline" 
+              style="color: var(--text-color);"
               data-astro-transition="fade"
             >
               {item.name}
@@ -22,8 +39,44 @@ import { NavData } from '../data/NavData';
           </li>
         ))
       ) : (
-        <li class="text-gray-400">Navigation links unavailable</li>
+        <li class="text-sm font-semibold" style="color: var(--text-color);">Navigation links unavailable</li>
+      )}
+    </ul>
+  </div>
+
+  <!-- Mobile Dropdown Menu -->
+  <div 
+    id="mobile-menu" 
+    class="hidden md:hidden bg-white border-t border-gray-200 transition duration-300 ease-in-out transform opacity-0 translate-y-[-10px]"
+  >
+    <ul class="flex flex-col items-center py-4 space-y-4">
+      {NavData && NavData.length > 0 ? (
+        NavData.map(item => (
+          <li>
+            <a 
+              href={item.path} 
+              class="text-sm font-semibold transition-colors hover:underline focus:underline" 
+              style="color: var(--text-color);"
+              data-astro-transition="fade"
+            >
+              {item.name}
+            </a>
+          </li>
+        ))
+      ) : (
+        <li class="text-sm font-semibold" style="color: var(--text-color);">Navigation links unavailable</li>
       )}
     </ul>
   </div>
 </nav>
+
+<style>
+  button.group span::before,
+  button.group span::after {
+    background-color: var(--text-color);
+  }
+
+  #mobile-menu:not(.hidden) {
+    opacity: 1;
+  }
+</style>
