@@ -7,7 +7,7 @@ import { NavData } from "../data/NavData";
 <MainLayout
   title="About Yangon University"
   description="Learn about the history of Yangon University, a key institution in Myanmar’s education and independence movement."
-  showNavbar={false}
+  showNavbar={true}
 >
   <style>
     /* Ensure the hero section takes full width on all devices */
@@ -119,148 +119,6 @@ import { NavData } from "../data/NavData";
     }
   </style>
   <!-- Hero Section with Blurred Background Image, Custom Navbar, and Down Arrow -->
-  <section
-    class="relative h-[500px] flex flex-col items-center justify-center intro-animate"
-  >
-    <!-- Background Image with Blur -->
-    <div
-      class="absolute inset-0 bg-cover bg-center w-full h-full"
-      style="background-image: url('/images/yu.png'); filter: blur(8px);"
-    >
-    </div>
-    <div class="absolute inset-0 bg-black opacity-50 w-full h-full"></div>
-    <!-- Overlay for text readability -->
-
-    <!-- Custom Navbar -->
-    <nav aria-label="Primary" class="absolute top-0 left-0 w-full z-20">
-      <div class="navbar flex items-center justify-between px-6 py-4 w-full">
-        <!-- Logo -->
-        <a href="/" class="text-2xl font-bold text-white" aria-label="Go home">
-          YU Hub
-        </a>
-
-        <!-- Hamburger Button (Mobile Only) -->
-        <button
-          id="menu-toggle"
-          class="group relative inline-block w-[44px] h-[45px] p-[5px] md:hidden mb-[2px]"
-          aria-label="Toggle navigation menu"
-          aria-expanded="false"
-        >
-          <span
-            class="mx-[auto] my-[0] relative top-[12px] w-[30px] h-[6px] block [transition-property:margin,_width] group-hover:w-[20px] duration-200 after:absolute after:content-[''] after:mt-[12px] after:w-[30px] after:h-[6px] after:block after:left-[0] after:[transition-property:margin,_left] after:duration-200 group-hover:after:mt-[6px] group-hover:after:-left-[5px] before:absolute before:content-[''] before:-mt-[12px] before:w-[30px] before:h-[6px] before:block before:left-[0] before:[transition-property:margin,_width,_left] before:duration-200 group-hover:before:-mt-[6px] group-hover:before:w-[10px] group-hover:before:left-[5px]"
-            style="background-color: #fff;"></span>
-        </button>
-
-        <!-- Desktop Nav Items -->
-        <ul class="hidden md:flex space-x-8">
-          {
-            NavData && NavData.length > 0 ? (
-              NavData.map((item) => (
-                <li>
-                  <a
-                    href={item.path}
-                    class="box text-sm font-semibold transition-colors hover:underline focus:underline text-white"
-                    data-astro-transition="fade"
-                  >
-                    {item.name}
-                  </a>
-                </li>
-              ))
-            ) : (
-              <li class="text-sm font-semibold text-white">
-                Navigation links unavailable
-              </li>
-            )
-          }
-        </ul>
-      </div>
-
-      <!-- Mobile Sidebar Menu -->
-      <div
-        id="mobile-menu"
-        class="md:hidden fixed top-0 right-0 h-60 w-64 transform transition-transform duration-300 ease-in-out z-30 hidden"
-        style="background-color: transparent;"
-      >
-        <div class="flex justify-end p-4">
-          <button
-            class="text-gray-600 hover:text-gray-800"
-            aria-label="Close navigation menu"
-            onclick="document.getElementById('mobile-menu').classList.add('hidden'); document.getElementById('menu-toggle').setAttribute('aria-expanded', 'false'); document.body.style.overflow = 'auto';"
-          >
-            <svg
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        </div>
-        <ul class="flex flex-col items-center py-4 space-y-4">
-          {
-            NavData && NavData.length > 0 ? (
-              NavData.map((item) => (
-                <li>
-                  <a
-                    href={item.path}
-                    class="box text-sm font-semibold transition-colors hover:underline focus:underline"
-                    style="color: var(--text-color); background: none;"
-                    data-astro-transition="fade"
-                    onclick="document.getElementById('mobile-menu').classList.add('hidden'); document.getElementById('menu-toggle').setAttribute('aria-expanded', 'false'); document.body.style.overflow = 'auto';"
-                  >
-                    {item.name}
-                  </a>
-                </li>
-              ))
-            ) : (
-              <li
-                class="text-sm font-semibold"
-                style="color: var(--text-color); background: none;"
-              >
-                Navigation links unavailable
-              </li>
-            )
-          }
-        </ul>
-      </div>
-    </nav>
-
-    <!-- Hero Content -->
-    <div
-      class="absolute inset-0 flex flex-col items-center justify-center w-full"
-    >
-      <div
-        class="relative text-center z-10 flex-1 flex flex-col justify-center"
-      >
-        <h1 class="text-6xl md:text-7xl font-bold text-white tracking-wide">
-          YANGON UNIVERSITY
-        </h1>
-      </div>
-      <div class="relative z-10 pb-6">
-        <a href="#history" class="inline-block text-white">
-          <svg
-            class="w-12 h-12"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 9l6 6 6-6"></path>
-          </svg>
-        </a>
-      </div>
-    </div>
-  </section>
   <!-- History Section -->
   <div id="history" class="flex justify-center py-8 intro-animate">
     <div
@@ -301,6 +159,58 @@ import { NavData } from "../data/NavData";
       </div>
     </div>
   </div>
+    <!-- Student Life Card with Image on Left and Content on Right -->
+<div class="bg-white rounded-lg p-6 flex flex-col md:flex-row gap-6 my-20" id="student-life">
+  <!-- Image Section -->
+  <div class="md:w-1/2">
+    <img
+      src="images/student-life.jpg"
+      alt="Student life at Yangon University"
+      class="w-full h-full object-cover rounded-lg"
+    />
+  </div>
+
+  <!-- Text Content Section -->
+  <div class="md:w-1/2 flex flex-col">
+    <h2 class="text-xl font-semibold mb-3" style="color: var(--text-color);">
+      Student Life
+    </h2>
+    <p class="text-base leading-relaxed mb-6" style="color: var(--text-color);">
+      Life at the University of Yangon is more than just academics. Our vibrant campus offers a dynamic experience where students can immerse themselves in cultural festivals, join diverse clubs, and build a strong sense of community while pursuing personal growth.
+    </p>
+
+    <!-- Activities and Clubs Section -->
+    <h3 class="text-lg font-semibold mb-3" style="color: var(--text-color);">
+      Activities & Clubs
+    </h3>
+    <ul class="list-none text-base leading-relaxed space-y-4" style="color: var(--text-color);">
+      <li class="flex items-start">
+        <span class="text-primary mr-2">•</span>
+        <div>
+          <strong>Dance Club</strong>: Learn hip hop, K-pop, and cheerleading, and shine at our annual dance festivals.
+        </div>
+      </li>
+      <li class="flex items-start">
+        <span class="text-primary mr-2">•</span>
+        <div>
+          <strong>Swimming Club</strong>: Founded in 2019, this club promotes swimming and has earned accolades in university tournaments.
+        </div>
+      </li>
+      <li class="flex items-start">
+        <span class="text-primary mr-2">•</span>
+        <div>
+          <strong>Motivators English Club (YUMEC)</strong>: Boost your English skills and mental well-being through engaging sessions.
+        </div>
+      </li>
+      <li class="flex items-start">
+        <span class="text-primary mr-2">•</span>
+        <div>
+          <strong>Students' Union</strong>: Champions student rights and organizes initiatives like the Oway Journal and Students Without Borders.
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
 
   <!-- Academic Departments Section -->
   <div class="flex justify-center pb-8 intro-animate">
@@ -349,7 +259,7 @@ import { NavData } from "../data/NavData";
       </ul>
     </div>
   </div>
-
+  
   <!-- Campus Facilities Section -->
   <div id="campus-facilities" class="flex justify-center py-8 intro-animate">
     <div class="max-w-5xl w-full px-4">
@@ -418,7 +328,7 @@ import { NavData } from "../data/NavData";
             </p>
           </div>
           <img
-            src="images/canteen.png"
+            src="images/canteen.jpg"
             alt="University canteen"
             class="w-full h-75 object-cover rounded-lg"
           />
@@ -433,19 +343,17 @@ import { NavData } from "../data/NavData";
               class="text-lg font-medium mb-2"
               style="color: var(--text-color);"
             >
-              Students’ Union Library
+              Universities' Central Library
             </h2>
             <p
               class="text-sm leading-relaxed mb-4"
               style="color: var(--text-color);"
             >
-              The Students’ Union reading room is led by the Union office. The
-              books are collected and borrowed according to the interests of the
-              students.
+            The University of Rangoon, Myanmar’s first university, was established in December 1920 with two main colleges: University College and Judson College. The University Library was founded in 1929 as a research and reference center and soon gained a reputation as one of Southeast Asia’s best, especially in history and culture.
             </p>
           </div>
           <img
-            src="images/library.png"
+            src="images/library.jpg"
             alt="Students’ Union Library"
             class="w-full h-70 object-cover rounded-lg"
           />
@@ -466,21 +374,17 @@ import { NavData } from "../data/NavData";
               class="text-sm leading-relaxed mb-4"
               style="color: var(--text-color);"
             >
-              In 2020, the first phase of the university's main stadium has
-              completed. The second phase is to construct the audience spaces
-              and stadium floors. YTU Gymnasium is one of the most iconic
-              stadiums in the country. Plans are also underway to build new
-              tennis courts and basketball courts.
+            ​The University of Yangon boasts well-maintained tennis courts located near Thahtone Street within the campus grounds. These courts are popular among students and local residents, especially during mornings and evenings, offering a welcoming environment for both casual and competitive play. The campus also features a basketball court adjacent to the Students’ Union building, providing students with facilities to engage in sports and recreational activities.
             </p>
           </div>
           <div class="flex space-x-2">
             <img
-              src="images/stadium1.png"
+              src="images/stadium1.jpg"
               alt="University stadium"
               class="w-1/2 h-70 object-cover rounded-lg"
             />
             <img
-              src="images/stadium3.png"
+              src="images/stadium3.jpg"
               alt="Sports facilities"
               class="w-1/2 h-70 object-cover rounded-lg"
             />
@@ -489,7 +393,7 @@ import { NavData } from "../data/NavData";
       </div>
     </div>
   </div>
-
+  
   <!-- Smooth Scrolling and Intro Animation Script -->
   <script>
  const historyLink = document.querySelector('a[href="#history"]');

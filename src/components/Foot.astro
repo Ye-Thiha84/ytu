@@ -1,9 +1,103 @@
 ---
 const currentYear = new Date().getFullYear();
 ---
+<style>
+  .footer-container {
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 40px;
+    flex-wrap: wrap;
+    gap: 20px;
+    background-color: #f9f9f9; /* optional light background */
+  }
 
-<div class="bg-white border-t border-gray-200 text-center py-4">
-  <small class="text-sm font-medium" style="color: var(--text-color);">
-    Copyright © {currentYear} | All rights reserved
-  </small>
+  .footer-section {
+    flex: 1;
+    min-width: 250px;
+    padding: 10px;
+  }
+
+  .parent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .child {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-style: preserve-3d;
+    transition: all 0.5s ease-in-out;
+    border-radius: 50%;
+    margin: 0 5px;
+  }
+
+  .child:hover {
+    background-color: white;
+    transform: perspective(180px) rotateX(60deg) translateY(2px);
+    box-shadow: 0px 10px 10px rgb(1, 49, 182);
+  }
+
+  .button {
+    border: none;
+    background-color: transparent;
+    font-size: 20px;
+  }
+
+  .button:hover {
+    transform: translate3d(0px, 0px, 15px) perspective(180px) rotateX(-35deg) translateY(2px);
+    border-radius: 50%;
+  }
+
+  .footer-bottom {
+    border-top: 1px solid #ccc;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #333;
+    background-color: #fff;
+  }
+</style>
+
+<div class="footer-container">
+  <!-- University Address -->
+  <div class="footer-section">
+    <strong>University Of Yangon,</strong><br>
+    University Avenue Road, Kamayut Township 11041,<br>
+    Yangon, Myanmar
+  </div>
+
+  <!-- Social Media -->
+<div class="footer-section" style="text-align: center;">
+  <div style="margin-bottom: 8px; font-weight: bold;">Visitors</div>
+  <div class="parent">
+    <div class="child">
+      <a href="https://www.facebook.com/UniversityOfYangon/?ref=br_rs" target="_blank" class="button" aria-label="Facebook Page">
+        <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 320 512" fill="#4267B2">
+          <path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 
+            12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 
+            225.36 0c-73.22 0-121.08 44.38-121.08 
+            124.72v70.62H22.89V288h81.39v224h100.17V288z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Contact Info -->
+  <div class="footer-section" style="text-align: right;">
+    Tel: +95 (9) 8602057<br>
+    Fax: +95 (0)1 510721<br>
+    Email: info@uy.edu.mm
+  </div>
+</div>
+
+<div class="footer-bottom">
+  <small>Copyright © {currentYear} | All rights reserved</small>
 </div>
