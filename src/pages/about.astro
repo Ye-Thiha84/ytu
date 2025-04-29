@@ -9,122 +9,243 @@ import { NavData } from "../data/NavData";
   description="Learn about the history of Yangon University, a key institution in Myanmar’s education and independence movement."
   showNavbar={false}
 >
-<style>
-  /* Ensure the hero section takes full width on all devices */
-  :global(section) {
-    margin: 0;
-    padding: 0;
-  }
-
-  /* Ensure the background image covers the full viewport width on mobile */
-  @media (max-width: 768px) {
-    .bg-cover {
-      background-size: cover;
-      background-position: center;
+  <style>
+    /* Ensure the hero section takes full width on all devices */
+    :global(section) {
+      margin: 0;
+      padding: 0;
     }
-  }
 
-  /* Remove any default padding or margins that might cause white space */
-  :global(body) {
-    margin: 0;
-    padding: 0;
-  }
+    /* Ensure the background image covers the full viewport width on mobile */
+    @media (max-width: 768px) {
+      .bg-cover {
+        background-size: cover;
+        background-position: center;
+      }
+    }
 
-  button.group span::before,
-  button.group span::after {
-    background-color: #fff;
-  }
+    /* Remove any default padding or margins that might cause white space */
+    :global(body) {
+      margin: 0;
+      padding: 0;
+    }
 
-  /* Ensure mobile menu is completely hidden when closed */
-  #mobile-menu.hidden {
-    display: none;
-  }
+    button.group span::before,
+    button.group span::after {
+      background-color: #fff;
+    }
 
-  #mobile-menu:not(.hidden) {
-    display: block;
-  }
+    /* Ensure mobile menu is completely hidden when closed */
+    #mobile-menu.hidden {
+      display: none;
+    }
 
-  /* Intro Animation Styles */
-  .intro-animate {
-    opacity: 0;
-    transform: scale(0.95);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-  }
+    #mobile-menu:not(.hidden) {
+      display: block;
+    }
 
-  .intro-animate.animate {
-    opacity: 1;
-    transform: scale(1);
-  }
-</style>
+    /* Intro Animation Styles */
+    .intro-animate {
+      opacity: 0;
+      transform: scale(0.95);
+      transition:
+        opacity 0.8s ease-out,
+        transform 0.8s ease-out;
+    }
+
+    .intro-animate.animate {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .box {
+      width: auto;
+      padding: 10px 15px;
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+      text-transform: uppercase;
+      font-weight: 700;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .box::before,
+    .box::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 4px;
+      box-sizing: border-box;
+      transition:
+        transform 0.3s linear,
+        height 0.3s linear;
+    }
+
+    .box::before {
+      left: 0;
+      bottom: 0;
+      border-bottom: 4px solid transparent;
+      border-left: 4px solid transparent;
+      transform: translateX(100%);
+    }
+
+    .box::after {
+      top: 0;
+      left: 0;
+      border-top: 4px solid transparent;
+      border-right: 4px solid transparent;
+      transform: translateX(-100%);
+    }
+
+    .box:hover {
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .box:hover::before {
+      border-color: var(--text-color);
+      height: 100%;
+      transform: translateX(0);
+      transition:
+        transform 0.3s linear,
+        height 0.3s linear 0.3s;
+    }
+
+    .box:hover::after {
+      border-color: var(--text-color);
+      height: 100%;
+      transform: translateX(0);
+      transition:
+        transform 0.3s linear,
+        height 0.3s linear 0.6s;
+    }
+  </style>
   <!-- Hero Section with Blurred Background Image, Custom Navbar, and Down Arrow -->
-<section class="relative h-[500px] flex flex-col items-center justify-center intro-animate ">
-  <!-- Background Image with Blur -->
-  <div
-    class="absolute inset-0 bg-cover bg-center w-full h-full"
-    style="background-image: url('/images/yu.png'); filter: blur(8px);"
+  <section
+    class="relative h-[500px] flex flex-col items-center justify-center intro-animate"
   >
-  </div>
-  <div class="absolute inset-0 bg-black opacity-50 w-full h-full"></div>
-  <!-- Overlay for text readability -->
-
-  <!-- Custom Navbar -->
-  <nav aria-label="Primary" class="absolute top-0 left-0 w-full z-20">
-    <div class="navbar flex items-center justify-between px-6 py-4 w-full">
-      <!-- Logo -->
-      <a href="/" class="text-2xl font-bold text-white" aria-label="Go home">
-        YU Hub
-      </a>
-
-      <!-- Hamburger Button (Mobile Only) -->
-      <button
-        id="menu-toggle"
-        class="group relative inline-block w-[44px] h-[45px] p-[5px] md:hidden mb-[2px]"
-        aria-label="Toggle navigation menu"
-        aria-expanded="false"
-      >
-        <span
-          class="mx-[auto] my-[0] relative top-[12px] w-[30px] h-[6px] block [transition-property:margin,_width] group-hover:w-[20px] duration-200 after:absolute after:content-[''] after:mt-[12px] after:w-[30px] after:h-[6px] after:block after:left-[0] after:[transition-property:margin,_left] after:duration-200 group-hover:after:mt-[6px] group-hover:after:-left-[5px] before:absolute before:content-[''] before:-mt-[12px] before:w-[30px] before:h-[6px] before:block before:left-[0] before:[transition-property:margin,_width,_left] before:duration-200 group-hover:before:-mt-[6px] group-hover:before:w-[10px] group-hover:before:left-[5px]"
-          style="background-color: #fff;"></span>
-      </button>
-
-      <!-- Desktop Nav Items -->
-      <ul class="hidden md:flex space-x-8">
-        {
-          NavData && NavData.length > 0 ? (
-            NavData.map((item) => (
-              <li>
-                <a
-                  href={item.path}
-                  class="text-sm font-semibold transition-colors hover:underline focus:underline text-white"
-                  data-astro-transition="fade"
-                >
-                  {item.name}
-                </a>
-              </li>
-            ))
-          ) : (
-            <li class="text-sm font-semibold text-white">
-              Navigation links unavailable
-            </li>
-          )
-        }
-      </ul>
-    </div>
-
-    <!-- Mobile Sidebar Menu -->
+    <!-- Background Image with Blur -->
     <div
-      id="mobile-menu"
-      class="md:hidden fixed top-0 right-0 h-60 w-64 transform transition-transform duration-300 ease-in-out z-30 hidden"
-      style="background-color: transparent;"
+      class="absolute inset-0 bg-cover bg-center w-full h-full"
+      style="background-image: url('/images/yu.png'); filter: blur(8px);"
     >
-      <div class="flex justify-end p-4">
+    </div>
+    <div class="absolute inset-0 bg-black opacity-50 w-full h-full"></div>
+    <!-- Overlay for text readability -->
+
+    <!-- Custom Navbar -->
+    <nav aria-label="Primary" class="absolute top-0 left-0 w-full z-20">
+      <div class="navbar flex items-center justify-between px-6 py-4 w-full">
+        <!-- Logo -->
+        <a href="/" class="text-2xl font-bold text-white" aria-label="Go home">
+          YU Hub
+        </a>
+
+        <!-- Hamburger Button (Mobile Only) -->
         <button
-          class="text-gray-600 hover:text-gray-800"
-          aria-label="Close navigation menu"
-          onclick="document.getElementById('mobile-menu').classList.add('hidden'); document.getElementById('menu-toggle').setAttribute('aria-expanded', 'false'); document.body.style.overflow = 'auto';"
+          id="menu-toggle"
+          class="group relative inline-block w-[44px] h-[45px] p-[5px] md:hidden mb-[2px]"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
         >
+          <span
+            class="mx-[auto] my-[0] relative top-[12px] w-[30px] h-[6px] block [transition-property:margin,_width] group-hover:w-[20px] duration-200 after:absolute after:content-[''] after:mt-[12px] after:w-[30px] after:h-[6px] after:block after:left-[0] after:[transition-property:margin,_left] after:duration-200 group-hover:after:mt-[6px] group-hover:after:-left-[5px] before:absolute before:content-[''] before:-mt-[12px] before:w-[30px] before:h-[6px] before:block before:left-[0] before:[transition-property:margin,_width,_left] before:duration-200 group-hover:before:-mt-[6px] group-hover:before:w-[10px] group-hover:before:left-[5px]"
+            style="background-color: #fff;"></span>
+        </button>
+
+        <!-- Desktop Nav Items -->
+        <ul class="hidden md:flex space-x-8">
+          {
+            NavData && NavData.length > 0 ? (
+              NavData.map((item) => (
+                <li>
+                  <a
+                    href={item.path}
+                    class="box text-sm font-semibold transition-colors hover:underline focus:underline text-white"
+                    data-astro-transition="fade"
+                  >
+                    {item.name}
+                  </a>
+                </li>
+              ))
+            ) : (
+              <li class="text-sm font-semibold text-white">
+                Navigation links unavailable
+              </li>
+            )
+          }
+        </ul>
+      </div>
+
+      <!-- Mobile Sidebar Menu -->
+      <div
+        id="mobile-menu"
+        class="md:hidden fixed top-0 right-0 h-60 w-64 transform transition-transform duration-300 ease-in-out z-30 hidden"
+        style="background-color: transparent;"
+      >
+        <div class="flex justify-end p-4">
+          <button
+            class="text-gray-600 hover:text-gray-800"
+            aria-label="Close navigation menu"
+            onclick="document.getElementById('mobile-menu').classList.add('hidden'); document.getElementById('menu-toggle').setAttribute('aria-expanded', 'false'); document.body.style.overflow = 'auto';"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <ul class="flex flex-col items-center py-4 space-y-4">
+          {
+            NavData && NavData.length > 0 ? (
+              NavData.map((item) => (
+                <li>
+                  <a
+                    href={item.path}
+                    class="box text-sm font-semibold transition-colors hover:underline focus:underline"
+                    style="color: var(--text-color); background: none;"
+                    data-astro-transition="fade"
+                    onclick="document.getElementById('mobile-menu').classList.add('hidden'); document.getElementById('menu-toggle').setAttribute('aria-expanded', 'false'); document.body.style.overflow = 'auto';"
+                  >
+                    {item.name}
+                  </a>
+                </li>
+              ))
+            ) : (
+              <li
+                class="text-sm font-semibold"
+                style="color: var(--text-color); background: none;"
+              >
+                Navigation links unavailable
+              </li>
+            )
+          }
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Content -->
+    <div
+      class="absolute inset-0 flex flex-col items-center justify-center w-full"
+    >
+      <div
+        class="relative text-center z-10 flex-1 flex flex-col justify-center"
+      >
+        <h1 class="text-6xl md:text-7xl font-bold text-white tracking-wide">
+          YANGON UNIVERSITY
+        </h1>
+      </div>
+      <div class="relative z-10 pb-6">
+        <a href="#history" class="inline-block text-white">
           <svg
-            class="w-6 h-6"
+            class="w-12 h-12"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -134,67 +255,12 @@ import { NavData } from "../data/NavData";
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"></path>
+              d="M6 9l6 6 6-6"></path>
           </svg>
-        </button>
+        </a>
       </div>
-      <ul class="flex flex-col items-center py-4 space-y-4">
-        {
-          NavData && NavData.length > 0 ? (
-            NavData.map((item) => (
-              <li>
-                <a
-                  href={item.path}
-                  class="text-sm font-semibold transition-colors hover:underline focus:underline"
-                  style="color: var(--text-color); background: none;"
-                  data-astro-transition="fade"
-                  onclick="document.getElementById('mobile-menu').classList.add('hidden'); document.getElementById('menu-toggle').setAttribute('aria-expanded', 'false'); document.body.style.overflow = 'auto';"
-                >
-                  {item.name}
-                </a>
-              </li>
-            ))
-          ) : (
-            <li
-              class="text-sm font-semibold"
-              style="color: var(--text-color); background: none;"
-            >
-              Navigation links unavailable
-            </li>
-          )
-        }
-      </ul>
     </div>
-  </nav>
-
-  <!-- Hero Content -->
-  <div class="absolute inset-0 flex flex-col items-center justify-center w-full">
-    <div
-      class="relative text-center z-10 flex-1 flex flex-col justify-center"
-    >
-      <h1 class="text-6xl md:text-7xl font-bold text-white tracking-wide">
-        YANGON UNIVERSITY
-      </h1>
-    </div>
-    <div class="relative z-10 pb-6">
-      <a href="#history" class="inline-block text-white">
-        <svg
-          class="w-12 h-12"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 9l6 6 6-6"></path>
-        </svg>
-      </a>
-    </div>
-  </div>
-</section>
+  </section>
   <!-- History Section -->
   <div id="history" class="flex justify-center py-8 intro-animate">
     <div
@@ -287,18 +353,32 @@ import { NavData } from "../data/NavData";
   <!-- Campus Facilities Section -->
   <div id="campus-facilities" class="flex justify-center py-8 intro-animate">
     <div class="max-w-5xl w-full px-4">
-      <h1 class="text-2xl font-semibold mb-6 text-center" style="color: var(--text-color);">
+      <h1
+        class="text-2xl font-semibold mb-6 text-center"
+        style="color: var(--text-color);"
+      >
         Campus Facilities
       </h1>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Student Accommodation Card -->
-        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-4 flex flex-col">
+        <div
+          class="bg-white border border-gray-200 shadow-sm rounded-lg p-4 flex flex-col"
+        >
           <div class="flex-1">
-            <h2 class="text-lg font-medium mb-2" style="color: var(--text-color);">
+            <h2
+              class="text-lg font-medium mb-2"
+              style="color: var(--text-color);"
+            >
               Student Accommodation
             </h2>
-            <p class="text-sm leading-relaxed mb-4" style="color: var(--text-color);">
-              There are a total of six student dormitories, serving about 1,000 students. Efforts are also being made to expand the number of modern dormitories, and plans are afoot to build a new dormitory that can accommodate up to 300 students.
+            <p
+              class="text-sm leading-relaxed mb-4"
+              style="color: var(--text-color);"
+            >
+              There are a total of six student dormitories, serving about 1,000
+              students. Efforts are also being made to expand the number of
+              modern dormitories, and plans are afoot to build a new dormitory
+              that can accommodate up to 300 students.
             </p>
           </div>
           <div class="flex space-x-2">
@@ -316,13 +396,25 @@ import { NavData } from "../data/NavData";
         </div>
 
         <!-- University Canteen Card -->
-        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-4 flex flex-col">
+        <div
+          class="bg-white border border-gray-200 shadow-sm rounded-lg p-4 flex flex-col"
+        >
           <div class="flex-1">
-            <h2 class="text-lg font-medium mb-2" style="color: var(--text-color);">
+            <h2
+              class="text-lg font-medium mb-2"
+              style="color: var(--text-color);"
+            >
               University Canteen
             </h2>
-            <p class="text-sm leading-relaxed mb-4" style="color: var(--text-color);">
-              The new University Canteen has been built to accommodate more modern student services and is attached to the Students’ Union building. The old canteen will be demolished and rebuilt to fit and be harmonized with the new canteen. Plans are underway to expand canteens elsewhere on campus.
+            <p
+              class="text-sm leading-relaxed mb-4"
+              style="color: var(--text-color);"
+            >
+              The new University Canteen has been built to accommodate more
+              modern student services and is attached to the Students’ Union
+              building. The old canteen will be demolished and rebuilt to fit
+              and be harmonized with the new canteen. Plans are underway to
+              expand canteens elsewhere on campus.
             </p>
           </div>
           <img
@@ -333,13 +425,23 @@ import { NavData } from "../data/NavData";
         </div>
 
         <!-- Students’ Union Library Card -->
-        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-4 flex flex-col">
+        <div
+          class="bg-white border border-gray-200 shadow-sm rounded-lg p-4 flex flex-col"
+        >
           <div class="flex-1">
-            <h2 class="text-lg font-medium mb-2" style="color: var(--text-color);">
+            <h2
+              class="text-lg font-medium mb-2"
+              style="color: var(--text-color);"
+            >
               Students’ Union Library
             </h2>
-            <p class="text-sm leading-relaxed mb-4" style="color: var(--text-color);">
-              The Students’ Union reading room is led by the Union office. The books are collected and borrowed according to the interests of the students.
+            <p
+              class="text-sm leading-relaxed mb-4"
+              style="color: var(--text-color);"
+            >
+              The Students’ Union reading room is led by the Union office. The
+              books are collected and borrowed according to the interests of the
+              students.
             </p>
           </div>
           <img
@@ -350,13 +452,25 @@ import { NavData } from "../data/NavData";
         </div>
 
         <!-- University Sport Facilities Card -->
-        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-4 flex flex-col">
+        <div
+          class="bg-white border border-gray-200 shadow-sm rounded-lg p-4 flex flex-col"
+        >
           <div class="flex-1">
-            <h2 class="text-lg font-medium mb-2" style="color: var(--text-color);">
+            <h2
+              class="text-lg font-medium mb-2"
+              style="color: var(--text-color);"
+            >
               University Sport Facilities
             </h2>
-            <p class="text-sm leading-relaxed mb-4" style="color: var(--text-color);">
-              In 2020, the first phase of the university's main stadium has completed. The second phase is to construct the audience spaces and stadium floors. YTU Gymnasium is one of the most iconic stadiums in the country. Plans are also underway to build new tennis courts and basketball courts.
+            <p
+              class="text-sm leading-relaxed mb-4"
+              style="color: var(--text-color);"
+            >
+              In 2020, the first phase of the university's main stadium has
+              completed. The second phase is to construct the audience spaces
+              and stadium floors. YTU Gymnasium is one of the most iconic
+              stadiums in the country. Plans are also underway to build new
+              tennis courts and basketball courts.
             </p>
           </div>
           <div class="flex space-x-2">
@@ -378,37 +492,38 @@ import { NavData } from "../data/NavData";
 
   <!-- Smooth Scrolling and Intro Animation Script -->
   <script>
-    // Smooth scrolling for anchor links
-    document
-      .querySelector('a[href="#history"]')
-      .addEventListener("click", (e) => {
-        e.preventDefault();
-        document
-          .querySelector("#history")
-          .scrollIntoView({ behavior: "smooth" });
-      });
+ const historyLink = document.querySelector('a[href="#history"]');
+const historySection = document.querySelector("#history");
+
+if (historyLink && historySection) {
+  historyLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    historySection.scrollIntoView({ behavior: "smooth" });
+  });
+}
+
 
     // Mobile menu toggle
-    document.getElementById("menu-toggle").addEventListener("click", () => {
-      const menu = document.getElementById("mobile-menu");
-      const isExpanded =
-        document.getElementById("menu-toggle").getAttribute("aria-expanded") ===
-        "true";
-      document
-        .getElementById("menu-toggle")
-        .setAttribute("aria-expanded", String(!isExpanded));
-      menu.classList.toggle("hidden");
-      // Toggle overflow on body
-      document.body.style.overflow = isExpanded ? "auto" : "hidden";
-    });
+    const toggleButton = document.getElementById("menu-toggle");
+const menu = document.getElementById("mobile-menu");
+
+if (toggleButton && menu) {
+  toggleButton.addEventListener("click", () => {
+    const isExpanded = toggleButton.getAttribute("aria-expanded") === "true";
+    toggleButton.setAttribute("aria-expanded", String(!isExpanded));
+    menu.classList.toggle("hidden");
+    document.body.style.overflow = isExpanded ? "auto" : "hidden";
+  });
+}
+
 
     // Trigger intro animation on page load
-    window.addEventListener('load', () => {
-      const elements = document.querySelectorAll('.intro-animate');
+    window.addEventListener("load", () => {
+      const elements = document.querySelectorAll(".intro-animate");
       elements.forEach((el, index) => {
         // Stagger animations for a smoother effect
         setTimeout(() => {
-          el.classList.add('animate');
+          el.classList.add("animate");
         }, index * 200); // Delay each section by 200ms
       });
     });

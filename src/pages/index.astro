@@ -27,6 +27,60 @@ import {newsItems , cards} from "../data/indexData"
       margin: 0;
       padding: 0;
     }
+    .box {
+  width: auto;
+  padding: 10px 15px;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  text-transform: uppercase;
+  font-weight: 700;
+  transition: box-shadow 0.3s ease;
+}
+
+.box::before,
+.box::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  box-sizing: border-box;
+  transition: transform 0.3s linear, height 0.3s linear;
+}
+
+.box::before {
+  left: 0;
+  bottom: 0;
+  border-bottom: 4px solid transparent;
+  border-left: 4px solid transparent;
+  transform: translateX(100%);
+}
+
+.box::after {
+  top: 0;
+  left: 0;
+  border-top: 4px solid transparent;
+  border-right: 4px solid transparent;
+  transform: translateX(-100%);
+}
+
+.box:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.box:hover::before {
+  border-color: var(--text-color);
+  height: 100%;
+  transform: translateX(0);
+  transition: transform 0.3s linear, height 0.3s linear 0.3s;
+}
+
+.box:hover::after {
+  border-color: var(--text-color);
+  height: 100%;
+  transform: translateX(0);
+  transition: transform 0.3s linear, height 0.3s linear 0.6s;
+}
 
     /* Section transition styles */
     .section {
@@ -483,7 +537,8 @@ import {newsItems , cards} from "../data/indexData"
     </div>
     <nav aria-label="Primary" class="navbar">
       <div class="flex items-center justify-between px-6 py-4 w-full">
-        <a href="/" class="text-2xl font-bold text-white" aria-label="Go home">
+        <a href="/" class="box text-2xl font-bold text-white" aria-label="Go home">
+ 76a1a01784a88c481c3003bba42e1256900e0d03
           YU Hub
         </a>
         <button
@@ -503,7 +558,7 @@ import {newsItems , cards} from "../data/indexData"
               <li>
                 <a
                   href={item.path}
-                  class="text-sm font-semibold transition-colors hover:underline focus:underline text-white"
+                  class="box text-sm font-semibold transition-colors hover:underline focus:underline text-white"
                   data-astro-transition="fade"
                 >
                   {item.name}
@@ -550,7 +605,7 @@ import {newsItems , cards} from "../data/indexData"
               <li>
                 <a
                   href={item.path}
-                  class="text-sm font-semibold transition-colors hover:underline focus:underline text-white"
+                  class="box text-sm font-semibold transition-colors hover:underline focus:underline text-white"
                   data-astro-transition="fade"
                   onclick="document.getElementById('mobile-menu').classList.add('hidden'); document.getElementById('menu-toggle').setAttribute('aria-expanded', 'false'); document.body.style.overflow = 'auto';"
                 >

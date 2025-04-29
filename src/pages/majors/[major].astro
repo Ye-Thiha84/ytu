@@ -1,31 +1,28 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
-import supabase from '../../utils/supabaseClient.js';
+import supabase from "../../utils/supabaseClient.js";
 
-// Define getStaticPaths to generate all possible routes
 export async function getStaticPaths() {
-  const { data: majors, error } = await supabase
-    .from('majors')
-    .select('slug');
+  const { data: majors, error } = await supabase.from("majors").select("slug");
 
   if (error) {
-    console.error('Error fetching majors for static paths:', error);
+    console.error("Error fetching majors for static paths:", error);
     return [];
   }
 
   return majors.map((major) => ({
-    params: { major: major.slug }
+    params: { major: major.slug },
   }));
 }
 
-// Get the major from the URL parameter
+// Params
 const { major } = Astro.params;
 
-// Fetch the data for the selected major
+// Fetch specific major
 const { data: majorData, error } = await supabase
-  .from('majors')
-  .select('*')
-  .eq('slug', major)
+  .from("majors")
+  .select("*")
+  .eq("slug", major)
   .single();
 
 if (error || !majorData) {
@@ -34,82 +31,111 @@ if (error || !majorData) {
 ---
 
 <MainLayout>
-  <section class="major-details">
-    <h1>{majorData.title}</h1>
-    <p class="description">{majorData.description}</p>
+  <section class="major-container">
+    <h1 class="major-title">{majorData.title}</h1>
+    <p class="major-description">{majorData.description}</p>
 
-    <h2>Key Topics</h2>
-    <ul class="topics-list">
-      {majorData.key_topics.map((topic) => (
-        <li>{topic}</li>
-      ))}
-    </ul>
+    <div class="info-block">
+      <h2>Key Topics</h2>
+      <ul>
+        {majorData.key_topics.map((topic: string) => <li>{topic}</li>)}
+      </ul>
+    </div>
 
-    <h2>Career Prospects</h2>
-    <ul class="career-list">
-      {majorData.career_prospects.map((career) => (
-        <li>{career}</li>
-      ))}
-    </ul>
+    <div class="info-block">
+      <h2>Career Prospects</h2>
+      <ul>
+        {majorData.career_prospects.map((career: string) => <li>{career}</li>)}
+      </ul>
+    </div>
 
-    <a href="/maj" class="back-btn">Back to Majors</a>
+    <a href="/maj" class="back-link">← Back to All Majors</a>
   </section>
 
   <style>
-    .major-details {
-      max-width: 800px;
+    :root {
+      --text-color: #1a1a1a;
+      --bg-color: #ffffff;
+      --primary-color: #1a73e8;
+      --hover-color: #0c5fd3;
+      --card-bg: #f9f9f9;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .major-container {
+      max-width: 760px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 3rem 1rem;
       color: var(--text-color);
       background-color: var(--bg-color);
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+    .major-title {
+      font-size: 2.25rem;
       text-align: center;
+      margin-bottom: 1rem;
+      font-weight: 600;
     }
 
-    .description {
-      font-size: 1.2rem;
+    .major-description {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: #444;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .info-block {
+      background-color: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 10px;
       margin-bottom: 2rem;
-      line-height: 1.6;
+      box-shadow: var(--shadow);
     }
 
-    h2 {
-      font-size: 1.8rem;
-      margin-top: 1.5rem;
-      margin-bottom: 0.8rem;
+    .info-block h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #2c3e50;
     }
 
-    .topics-list,
-    .career-list {
+    .info-block ul {
+      padding-left: 1.5rem;
       list-style-type: disc;
-      padding-left: 2rem;
-      margin-bottom: 2rem;
+      color: #333;
     }
 
-    .topics-list li,
-    .career-list li {
-      font-size: 1.1rem;
+    .info-block li {
+      font-size: 1rem;
       margin-bottom: 0.5rem;
     }
 
-    .back-btn {
-      display: inline-block;
-      padding: 0.5rem 1rem;
-      background-color: #ffffff;
-      color: var(--bg-color);
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 2rem;
       text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background-color 0.2s ease;
+      font-weight: 500;
+      color: var(--primary-color);
+      transition: color 0.2s ease;
     }
 
-    .back-btn:hover {
-      background-color: #e0e0e0;
+    .back-link:hover {
+      color: var(--hover-color);
+    }
+
+    @media (max-width: 500px) {
+      .major-title {
+        font-size: 1.75rem;
+      }
+
+      .major-description {
+        font-size: 1rem;
+      }
+
+      .info-block h2 {
+        font-size: 1.25rem;
+      }
     }
   </style>
 </MainLayout>
