@@ -2,22 +2,70 @@
 import MainLayout from "../layouts/MainLayout.astro";
 import { Icon } from "astro-icon/components";
 import { NavData } from "../data/NavData";
+import {newsItems , cards} from "../data/indexData"
 ---
 
 <MainLayout 
   title="Welcome to Yangon University Hub" 
   description="A hub for Yangon University students and alumni."
-  class="bg-black"
+  class="bg-deep-blue"
   showNavbar={false}
 >
   <style>
-    /* Remove default body margins to eliminate gap */
+    /* Define color variables for consistency */
+    :root {
+      --deep-blue: #1E40AF; /* Adjusted for better harmony */
+      --teal: #2DD4BF;
+      --soft-navy: #3B82F6;
+      --dark-gray: #1F2937;
+      --white: #FFFFFF;
+      --light-gray: #D1D5DB;
+    }
+
+    /* Remove default body margins */
     body {
       margin: 0;
       padding: 0;
     }
 
-    /* Ensure the hero section takes full width and height */
+    /* Section transition styles */
+    .section {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+      will-change: opacity, transform;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Staggered animation for section children */
+    .section.visible .stagger {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.6s ease-out 0.2s, transform 0.6s ease-out 0.2s;
+    }
+
+    .section.visible .stagger.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Respect reduced motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      .section,
+      .section.visible,
+      .stagger,
+      .stagger.visible {
+        transition: none;
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* Hero section styles */
     .hero-section {
       margin: 0;
       padding: 0;
@@ -28,32 +76,39 @@ import { NavData } from "../data/NavData";
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      background-color: black; /* Fallback background if video fails to load */
+      background-color: var(--deep-blue);
     }
 
-    /* Style the video to cover the section without parallax */
     .bg-video {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%; /* Fixed height, no parallax */
+      height: 100%;
       object-fit: cover;
       z-index: -1;
     }
 
-    /* Overlay with a gradient for better text readability */
     .overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3));
+      background: linear-gradient(to bottom, rgba(30, 64, 175, 0.7), rgba(45, 212, 191, 0.3));
       z-index: 0;
     }
 
-    /* Ensure the navbar is transparent and overlays the video, flush with the top */
+    .spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+      width: 64px;
+      height: 64px;
+    }
+
     .navbar {
       background-color: transparent;
       position: absolute;
@@ -61,10 +116,9 @@ import { NavData } from "../data/NavData";
       left: 0;
       width: 100%;
       z-index: 10;
-      margin: 0; /* Ensure no margin pushes it down */
+      margin: 0;
     }
 
-    /* Ensure mobile menu is completely hidden when closed */
     #mobile-menu.hidden {
       display: none;
     }
@@ -73,7 +127,6 @@ import { NavData } from "../data/NavData";
       display: block;
     }
 
-    /* Hero content container with Golden Ratio proportions */
     .hero-content {
       position: relative;
       z-index: 10;
@@ -82,55 +135,110 @@ import { NavData } from "../data/NavData";
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 61.8%; /* Larger part of the Golden Ratio */
+      height: 61.8%;
     }
 
-    /* CTA container with Golden Ratio proportions */
     .cta-container {
       position: relative;
       z-index: 10;
-      height: 38.2%; /* Smaller part of the Golden Ratio */
+      height: 38.2%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
     }
 
-    /* Typography with Golden Ratio scaling */
     .hero-title {
-      font-size: 3.236rem; /* 2rem * 1.618 */
+      font-size: 3.236rem;
       line-height: 1.2;
-      margin-bottom: 1rem; /* Base spacing */
+      margin-bottom: 1rem;
+      color: var(--white);
     }
 
     .hero-subtitle {
       font-size: 2rem;
       line-height: 1.4;
-      margin-bottom: 1.618rem; /* 1rem * 1.618 */
+      margin-bottom: 1.618rem;
+      color: var(--light-gray);
     }
 
-    /* CTA Button */
     .cta-button {
-      background-color: transparent;
-      border: 2px solid white;
-      color: white;
-      padding: 0.75rem 2rem;
-      font-size: 1.125rem;
-      font-weight: 600;
-      border-radius: 0.375rem;
-      transition: all 0.3s ease;
       position: relative;
-      overflow: hidden;
+      border: none;
+      background: transparent;
+      padding: 0;
+      outline: none;
+      cursor: pointer;
+      font-family: monospace;
+      font-weight: 300;
+      text-transform: uppercase;
+      font-size: 1.125rem;
     }
 
-    .cta-button:hover {
-      background-color: white;
-      color: black;
+    .cta-button .shadow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 0.375rem;
+      transform: translateY(2px);
+      transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+    }
+
+    .cta-button:hover .shadow {
+      transform: translateY(4px);
+      transition-duration: 250ms;
+    }
+
+    .cta-button:active .shadow {
+      transform: translateY(1px);
+    }
+
+    .cta-button .edge {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 0.375rem;
+      background: linear-gradient(to left, var(--deep-blue), var(--soft-navy), var(--deep-blue));
+    }
+
+    .cta-button .front {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 2rem;
+      border-radius: 0.375rem;
+      background: linear-gradient(to right, var(--teal), var(--soft-navy));
+      color: var(--white);
+      transform: translateY(-4px);
+      transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1), filter 600ms;
+      gap: 0.75rem;
+    }
+
+    .cta-button:hover .front {
+      transform: translateY(-6px);
+      transition-duration: 250ms;
+      filter: brightness(110%);
+    }
+
+    .cta-button:active .front {
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
     }
 
-    /* Down Arrow */
+    .cta-button svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      transition: transform 250ms;
+    }
+
+    .cta-button:hover svg {
+      transform: translateX(4px);
+    }
+
     .down-arrow {
       position: absolute;
       bottom: 2rem;
@@ -138,7 +246,10 @@ import { NavData } from "../data/NavData";
       animation: bounce 2s infinite;
     }
 
-    /* Intro Animation Styles (for the whole section) */
+    .down-arrow svg {
+      color: var(--teal);
+    }
+
     .intro-animate {
       opacity: 0;
       transform: scale(0.95);
@@ -150,7 +261,6 @@ import { NavData } from "../data/NavData";
       transform: scale(1);
     }
 
-    /* Fade-in animations for title and subtitle */
     .fade-in {
       opacity: 0;
       transform: translateY(20px);
@@ -178,7 +288,6 @@ import { NavData } from "../data/NavData";
       }
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .hero-title {
         font-size: 2.5rem;
@@ -188,22 +297,169 @@ import { NavData } from "../data/NavData";
         font-size: 1.5rem;
       }
 
-      .cta-button {
+      .cta-button .front {
         padding: 0.5rem 1.5rem;
         font-size: 1rem;
       }
     }
 
-    /* Hamburger menu styles */
     button.group span::before,
     button.group span::after {
-      background-color: #fff;
+      background-color: var(--white);
+    }
+
+    /* Cards section styles */
+    .cards-section {
+      background-color: var(--dark-gray);
+      color: var(--white);
+    }
+
+    .cards-section h2 {
+      color: var(--white);
+    }
+
+    .card {
+      background-color: var(--soft-navy);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .card img {
+      background-color: var(--dark-gray);
+    }
+
+    .card h3 {
+      color: var(--white);
+    }
+
+    .card p {
+      color: var(--light-gray);
+    }
+
+    .card-actions {
+      display: flex;
+      justify-content: flex-start;
+      gap: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--light-gray);
+    }
+
+    .card-actions svg {
+      width: 1rem;
+      height: 1rem;
+      color: var(--light-gray);
+      transition: color 0.3s ease;
+    }
+
+    .card-actions svg:hover {
+      color: var(--teal);
+    }
+
+    /* News section styles */
+    .news-section {
+      background-color: var(--white);
+    }
+
+    .news-section h2 {
+      color: var(--deep-blue);
+    }
+
+    .news-item h3 {
+      color: var(--deep-blue);
+    }
+
+    .news-item .date {
+      color: var(--light-gray);
+    }
+
+    .news-item p {
+      color: var(--dark-gray);
+    }
+
+    .news-item a {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .news-item a:hover {
+      background-color: var(--teal);
+      color: var(--white);
+    }
+
+    .social-card {
+      background-color: var(--white);
+      border-radius: 0.75rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .social-card .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+    }
+
+    .social-card .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .social-card .avatar {
+      background-color: var(--teal);
+      border-radius: 50%;
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .social-card .username {
+      font-weight: bold;
+      color: var(--deep-blue);
+    }
+
+    .social-card .handle {
+      color: var(--light-gray);
+      font-size: 0.875rem;
+    }
+
+    .social-card .content {
+      padding: 1rem 1.5rem;
+      color: var(--dark-gray);
+      font-size: 0.875rem;
+    }
+
+    .social-card .actions {
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--light-gray);
+    }
+
+    .social-card .action-group {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .social-card svg {
+      width: 1rem;
+      height: 1rem;
+      color: var(--light-gray);
+      transition: color 0.3s ease;
+    }
+
+    .social-card svg:hover {
+      color: var(--teal);
     }
   </style>
 
-  <!-- Hero Section with Background Video and Transparent Navbar -->
-  <section class="hero-section intro-animate">
-    <!-- Background Video -->
+  <!-- Hero Section -->
+  <section class="hero-section section">
     <video
       autoplay
       loop
@@ -215,19 +471,21 @@ import { NavData } from "../data/NavData";
       <source src="/images/YUBG.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
-
-    <!-- Overlay with gradient -->
     <div class="overlay"></div>
-
-    <!-- Transparent Navbar -->
+    <div class="spinner">
+      <div
+        class="p-3 animate-spin drop-shadow-2xl bg-gradient-to-bl from-teal-400 via-blue-400 to-indigo-600 h-full w-full aspect-square rounded-full"
+      >
+        <div
+          class="rounded-full h-full w-full bg-dark-gray"
+        ></div>
+      </div>
+    </div>
     <nav aria-label="Primary" class="navbar">
       <div class="flex items-center justify-between px-6 py-4 w-full">
-        <!-- Logo -->
         <a href="/" class="text-2xl font-bold text-white" aria-label="Go home">
           YU Hub
         </a>
-
-        <!-- Hamburger Button (Mobile Only) -->
         <button
           id="menu-toggle"
           class="group relative inline-block w-[44px] h-[45px] p-[5px] md:hidden mb-[2px]"
@@ -236,11 +494,9 @@ import { NavData } from "../data/NavData";
         >
           <span
             class="mx-[auto] my-[0] relative top-[12px] w-[30px] h-[6px] block [transition-property:margin,_width] group-hover:w-[20px] duration-200 after:absolute after:content-[''] after:mt-[12px] after:w-[30px] after:h-[6px] after:block after:left-[0] after:[transition-property:margin,_left] after:duration-200 group-hover:after:mt-[6px] group-hover:after:-left-[5px] before:absolute before:content-[''] before:-mt-[12px] before:w-[30px] before:h-[6px] before:block before:left-[0] before:[transition-property:margin,_width,_left] before:duration-200 group-hover:before:-mt-[6px] group-hover:before:w-[10px] group-hover:before:left-[5px]"
-            style="background-color: #fff;"
+            style="background-color: var(--white);"
           ></span>
         </button>
-
-        <!-- Desktop Nav Items -->
         <ul class="hidden md:flex space-x-8">
           {NavData && NavData.length > 0 ? (
             NavData.map((item) => (
@@ -261,12 +517,10 @@ import { NavData } from "../data/NavData";
           )}
         </ul>
       </div>
-
-      <!-- Mobile Sidebar Menu -->
       <div
         id="mobile-menu"
         class="md:hidden fixed top-0 right-0 h-60 w-64 transform transition-transform duration-300 ease-in-out z-30 hidden"
-        style="background-color: rgba(0, 0, 0, 0.9);"
+        style="background-color: rgba(30, 64, 175, 0.9);"
       >
         <div class="flex justify-end p-4">
           <button
@@ -312,28 +566,37 @@ import { NavData } from "../data/NavData";
         </ul>
       </div>
     </nav>
-
-    <!-- Hero Content with Golden Ratio Proportions -->
-    <div class="hero-content">
-      <h1 class="hero-title text-white font-bold tracking-wide fade-in">
+    <div class="hero-content stagger">
+      <h1 class="hero-title font-bold tracking-wide fade-in">
         Welcome to Yangon University Hub
       </h1>
-      <p class="hero-subtitle text-white fade-in fade-in-delay">
+      <p class="hero-subtitle fade-in fade-in-delay">
         A place for students and alumni to connect and explore.
       </p>
     </div>
-
-    <!-- CTA Container with Golden Ratio Proportions -->
-    <div class="cta-container">
+    <div class="cta-container stagger">
       <a href="/about" class="cta-button">
-        Discover More
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <div class="front">
+          <span>Discover More</span>
+          <svg
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            class="w-5 h-5 ml-2 -mr-1"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+              fill-rule="evenodd"
+            ></path>
+          </svg>
+        </div>
       </a>
     </div>
-
-    <!-- Down Arrow -->
-    <a href="#next-section" class="down-arrow">
+    <a href="#cards-section" class="down-arrow">
       <svg
-        class="w-12 h-12 text-white"
+        class="w-12 h-12"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -349,19 +612,180 @@ import { NavData } from "../data/NavData";
     </a>
   </section>
 
-  <!-- Placeholder for the next section (to enable smooth scrolling) -->
-  <section id="next-section" class="h-screen flex items-center justify-center">
-    <h2 class="text-3xl text-white">Next Section</h2>
+  <!-- Cards Section -->
+  <section id="cards-section" class="cards-section section py-16 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold mb-10 text-center stagger">Explore Yangon University</h2>
+      <div class="grid gap-8 md:grid-cols-3">
+        {cards.map((card) => (
+          <a href={card.link} class="card rounded-lg overflow-hidden shadow-md hover:shadow-lg stagger">
+            <img src={card.image} alt={card.title} class="w-full h-48 object-cover" />
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-2">{card.title}</h3>
+              <p class="text-sm">{card.description}</p>
+              <div class="card-actions">
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+                  ></path>
+                </svg>
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" x2="12" y1="3" y2="15"></line>
+                </svg>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- News Section -->
+  <section id="news-section" class="news-section section py-16 px-4 md:px-12">
+    <h2 class="text-4xl font-bold text-center mb-12 stagger">Latest News</h2>
+    {newsItems.map((item, index) => (
+      <div
+        class={`news-item flex flex-col md:flex-row ${
+          index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+        } items-center mb-16 stagger`}
+      >
+        <div class="md:w-1/2">
+          <img
+            src={item.image}
+            alt={item.title}
+            class="rounded-lg shadow-md w-full h-auto object-cover"
+          />
+        </div>
+        <div class="md:w-1/2 md:pl-8 md:pr-8 mt-6 md:mt-0 text-center md:text-left">
+          <h3 class="text-2xl font-semibold mb-2">{item.title}</h3>
+          <p class="date text-sm mb-4">{item.date}</p>
+          <p class="mb-4">{item.excerpt}</p>
+          <a
+            href={item.link}
+            class="inline-block px-5 py-2 border text-sm transition rounded"
+          >
+            Read More
+          </a>
+          <div class="social-card">
+            <div class="header">
+              <div class="user-info">
+                <div class="avatar"></div>
+                <div>
+                  <div class="username">YU Hub</div>
+                  <div class="handle">@yuhub</div>
+                </div>
+              </div>
+            </div>
+            <div class="content">
+              {item.excerpt}
+            </div>
+            <div class="actions">
+              <div class="action-group">
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                  <path d="M21 3v5h-5"></path>
+                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                  <path d="M8 16H3v5"></path>
+                </svg>
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+                  ></path>
+                </svg>
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" x2="12" y1="3" y2="15"></line>
+                </svg>
+              </div>
+              <div class="action-group">
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="12" cy="12" r="1"></circle>
+                  <circle cx="19" cy="12" r="1"></circle>
+                  <circle cx="5" cy="12" r="1"></circle>
+                </svg>
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
   </section>
 
   <!-- Smooth Scrolling and Animations Script -->
   <script>
-    // Ensure DOM is fully loaded before running scripts
     document.addEventListener("DOMContentLoaded", () => {
       // Mobile menu toggle
       const menuToggle = document.getElementById("menu-toggle");
       const menu = document.getElementById("mobile-menu");
-
       if (menuToggle && menu) {
         menuToggle.addEventListener("click", () => {
           const isExpanded = menuToggle.getAttribute("aria-expanded") === "true";
@@ -374,18 +798,18 @@ import { NavData } from "../data/NavData";
       }
 
       // Smooth scrolling for down arrow
-      const downArrow = document.querySelector('a[href="#next-section"]');
+      const downArrow = document.querySelector('a[href="#cards Obstetrics & Gynecology-section"]');
       if (downArrow) {
         downArrow.addEventListener("click", (e) => {
           e.preventDefault();
-          const nextSection = document.querySelector("#next-section");
+          const nextSection = document.querySelector("#cards-section");
           if (nextSection) {
             nextSection.scrollIntoView({ behavior: "smooth" });
           }
         });
       }
 
-      // Trigger intro animation for the section
+      // Hero intro animations
       const introElements = document.querySelectorAll(".intro-animate");
       introElements.forEach((el, index) => {
         setTimeout(() => {
@@ -393,13 +817,38 @@ import { NavData } from "../data/NavData";
         }, index * 200);
       });
 
-      // Trigger fade-in animations for title and subtitle
       const fadeElements = document.querySelectorAll(".fade-in");
       fadeElements.forEach((el) => {
         el.classList.add("visible");
       });
 
-      // Log video load status for debugging
+      // Section transition observer
+      const sections = document.querySelectorAll(".section");
+      const observerOptions = {
+        root: null,
+        threshold: 0.1,
+      };
+
+      const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            const staggers = entry.target.querySelectorAll(".stagger");
+            staggers.forEach((el) => {
+              setTimeout(() => {
+                el.classList.add("visible");
+              }, 200);
+            });
+            sectionObserver.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach((section) => {
+        sectionObserver.observe(section);
+      });
+
+      // Video load logging
       const video = document.getElementById("bg-video");
       if (video) {
         video.addEventListener("error", (e) => {
