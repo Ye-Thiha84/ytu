@@ -1,0 +1,44 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+
+// Define getStaticPaths directly in the Astro file
+export function getStaticPaths() {
+  const pages = [
+    {
+      slug: "astro",
+      title: "Astro store",
+      text: "Welcome to the Astro store!",
+    },
+    {
+      slug: "biology",
+      title: "Astro products",
+      text: "We have lots of products for you",
+    },
+    {
+      slug: "microbiology",
+      title: "The ultimate Astro handbook",
+      text: "If you want to learn Astro, you must read this book.",
+    },
+  ];
+
+  return pages.map(({ slug, title, text }) => {
+    return {
+      params: { clubs: slug },
+      props: { title, text },
+    };
+  });
+}
+
+const { title, text } = Astro.props;
+---
+
+<MainLayout 
+  title={title} 
+  description={text}
+  class="bg-black"
+>
+  <div class="container mx-auto py-12 text-white">
+    <h1 class="text-3xl font-bold mb-4">{title}</h1>
+    <p>{text}</p>
+  </div>
+</MainLayout>

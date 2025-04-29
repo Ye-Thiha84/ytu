@@ -1,20 +1,416 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import { Icon } from "astro-icon/components";
+import { NavData } from "../data/NavData";
 ---
 
 <MainLayout 
-  title="Welcome to My Site" 
-  description="A cool Astro site with a black background" 
-  class=" bg-amber-50"
+  title="Welcome to Yangon University Hub" 
+  description="A hub for Yangon University students and alumni."
+  class="bg-black"
+  showNavbar={false}
 >
-  <h1 class="text-emerald-400 text-3xl font-bold underline">Hello world</h1>
-  <p class="text-white">This is the page content.</p>
-   <h1>Push </h1>
-  <h1>second Push</h1>
-  <h3>Third push</h3>
-  <h4>Fourth Push</h4>
-  <button class="bg-red-950 text-red-400 border border-red-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group">
-    <span class="bg-red-400 shadow-red-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-500 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
-    Hover Me
-  </button>
+  <style>
+    /* Remove default body margins to eliminate gap */
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Ensure the hero section takes full width and height */
+    .hero-section {
+      margin: 0;
+      padding: 0;
+      position: relative;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background-color: black; /* Fallback background if video fails to load */
+    }
+
+    /* Style the video to cover the section without parallax */
+    .bg-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%; /* Fixed height, no parallax */
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    /* Overlay with a gradient for better text readability */
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3));
+      z-index: 0;
+    }
+
+    /* Ensure the navbar is transparent and overlays the video, flush with the top */
+    .navbar {
+      background-color: transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      margin: 0; /* Ensure no margin pushes it down */
+    }
+
+    /* Ensure mobile menu is completely hidden when closed */
+    #mobile-menu.hidden {
+      display: none;
+    }
+
+    #mobile-menu:not(.hidden) {
+      display: block;
+    }
+
+    /* Hero content container with Golden Ratio proportions */
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 61.8%; /* Larger part of the Golden Ratio */
+    }
+
+    /* CTA container with Golden Ratio proportions */
+    .cta-container {
+      position: relative;
+      z-index: 10;
+      height: 38.2%; /* Smaller part of the Golden Ratio */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    /* Typography with Golden Ratio scaling */
+    .hero-title {
+      font-size: 3.236rem; /* 2rem * 1.618 */
+      line-height: 1.2;
+      margin-bottom: 1rem; /* Base spacing */
+    }
+
+    .hero-subtitle {
+      font-size: 2rem;
+      line-height: 1.4;
+      margin-bottom: 1.618rem; /* 1rem * 1.618 */
+    }
+
+    /* CTA Button */
+    .cta-button {
+      background-color: transparent;
+      border: 2px solid white;
+      color: white;
+      padding: 0.75rem 2rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      border-radius: 0.375rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-button:hover {
+      background-color: white;
+      color: black;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Down Arrow */
+    .down-arrow {
+      position: absolute;
+      bottom: 2rem;
+      z-index: 10;
+      animation: bounce 2s infinite;
+    }
+
+    /* Intro Animation Styles (for the whole section) */
+    .intro-animate {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    .intro-animate.animate {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Fade-in animations for title and subtitle */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease-out, transform 1s ease-out;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fade-in-delay {
+      transition-delay: 0.3s;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.5rem;
+      }
+
+      .cta-button {
+        padding: 0.5rem 1.5rem;
+        font-size: 1rem;
+      }
+    }
+
+    /* Hamburger menu styles */
+    button.group span::before,
+    button.group span::after {
+      background-color: #fff;
+    }
+  </style>
+
+  <!-- Hero Section with Background Video and Transparent Navbar -->
+  <section class="hero-section intro-animate">
+    <!-- Background Video -->
+    <video
+      autoplay
+      loop
+      muted
+      playsinline
+      class="bg-video"
+      id="bg-video"
+    >
+      <source src="/images/YUBG.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Overlay with gradient -->
+    <div class="overlay"></div>
+
+    <!-- Transparent Navbar -->
+    <nav aria-label="Primary" class="navbar">
+      <div class="flex items-center justify-between px-6 py-4 w-full">
+        <!-- Logo -->
+        <a href="/" class="text-2xl font-bold text-white" aria-label="Go home">
+          YU Hub
+        </a>
+
+        <!-- Hamburger Button (Mobile Only) -->
+        <button
+          id="menu-toggle"
+          class="group relative inline-block w-[44px] h-[45px] p-[5px] md:hidden mb-[2px]"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+        >
+          <span
+            class="mx-[auto] my-[0] relative top-[12px] w-[30px] h-[6px] block [transition-property:margin,_width] group-hover:w-[20px] duration-200 after:absolute after:content-[''] after:mt-[12px] after:w-[30px] after:h-[6px] after:block after:left-[0] after:[transition-property:margin,_left] after:duration-200 group-hover:after:mt-[6px] group-hover:after:-left-[5px] before:absolute before:content-[''] before:-mt-[12px] before:w-[30px] before:h-[6px] before:block before:left-[0] before:[transition-property:margin,_width,_left] before:duration-200 group-hover:before:-mt-[6px] group-hover:before:w-[10px] group-hover:before:left-[5px]"
+            style="background-color: #fff;"
+          ></span>
+        </button>
+
+        <!-- Desktop Nav Items -->
+        <ul class="hidden md:flex space-x-8">
+          {NavData && NavData.length > 0 ? (
+            NavData.map((item) => (
+              <li>
+                <a
+                  href={item.path}
+                  class="text-sm font-semibold transition-colors hover:underline focus:underline text-white"
+                  data-astro-transition="fade"
+                >
+                  {item.name}
+                </a>
+              </li>
+            ))
+          ) : (
+            <li class="text-sm font-semibold text-white">
+              Navigation links unavailable
+            </li>
+          )}
+        </ul>
+      </div>
+
+      <!-- Mobile Sidebar Menu -->
+      <div
+        id="mobile-menu"
+        class="md:hidden fixed top-0 right-0 h-60 w-64 transform transition-transform duration-300 ease-in-out z-30 hidden"
+        style="background-color: rgba(0, 0, 0, 0.9);"
+      >
+        <div class="flex justify-end p-4">
+          <button
+            class="text-white hover:text-gray-300"
+            aria-label="Close navigation menu"
+            onclick="document.getElementById('mobile-menu').classList.add('hidden'); document.getElementById('menu-toggle').setAttribute('aria-expanded', 'false'); document.body.style.overflow = 'auto';"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <ul class="flex flex-col items-center py-4 space-y-4">
+          {NavData && NavData.length > 0 ? (
+            NavData.map((item) => (
+              <li>
+                <a
+                  href={item.path}
+                  class="text-sm font-semibold transition-colors hover:underline focus:underline text-white"
+                  data-astro-transition="fade"
+                  onclick="document.getElementById('mobile-menu').classList.add('hidden'); document.getElementById('menu-toggle').setAttribute('aria-expanded', 'false'); document.body.style.overflow = 'auto';"
+                >
+                  {item.name}
+                </a>
+              </li>
+            ))
+          ) : (
+            <li class="text-sm font-semibold text-white">
+              Navigation links unavailable
+            </li>
+          )}
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Content with Golden Ratio Proportions -->
+    <div class="hero-content">
+      <h1 class="hero-title text-white font-bold tracking-wide fade-in">
+        Welcome to Yangon University Hub
+      </h1>
+      <p class="hero-subtitle text-white fade-in fade-in-delay">
+        A place for students and alumni to connect and explore.
+      </p>
+    </div>
+
+    <!-- CTA Container with Golden Ratio Proportions -->
+    <div class="cta-container">
+      <a href="/about" class="cta-button">
+        Discover More
+      </a>
+    </div>
+
+    <!-- Down Arrow -->
+    <a href="#next-section" class="down-arrow">
+      <svg
+        class="w-12 h-12 text-white"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 9l6 6 6-6"
+        ></path>
+      </svg>
+    </a>
+  </section>
+
+  <!-- Placeholder for the next section (to enable smooth scrolling) -->
+  <section id="next-section" class="h-screen flex items-center justify-center">
+    <h2 class="text-3xl text-white">Next Section</h2>
+  </section>
+
+  <!-- Smooth Scrolling and Animations Script -->
+  <script>
+    // Ensure DOM is fully loaded before running scripts
+    document.addEventListener("DOMContentLoaded", () => {
+      // Mobile menu toggle
+      const menuToggle = document.getElementById("menu-toggle");
+      const menu = document.getElementById("mobile-menu");
+
+      if (menuToggle && menu) {
+        menuToggle.addEventListener("click", () => {
+          const isExpanded = menuToggle.getAttribute("aria-expanded") === "true";
+          menuToggle.setAttribute("aria-expanded", String(!isExpanded));
+          menu.classList.toggle("hidden");
+          document.body.style.overflow = isExpanded ? "auto" : "hidden";
+        });
+      } else {
+        console.error("Menu toggle or mobile menu element not found");
+      }
+
+      // Smooth scrolling for down arrow
+      const downArrow = document.querySelector('a[href="#next-section"]');
+      if (downArrow) {
+        downArrow.addEventListener("click", (e) => {
+          e.preventDefault();
+          const nextSection = document.querySelector("#next-section");
+          if (nextSection) {
+            nextSection.scrollIntoView({ behavior: "smooth" });
+          }
+        });
+      }
+
+      // Trigger intro animation for the section
+      const introElements = document.querySelectorAll(".intro-animate");
+      introElements.forEach((el, index) => {
+        setTimeout(() => {
+          el.classList.add("animate");
+        }, index * 200);
+      });
+
+      // Trigger fade-in animations for title and subtitle
+      const fadeElements = document.querySelectorAll(".fade-in");
+      fadeElements.forEach((el) => {
+        el.classList.add("visible");
+      });
+
+      // Log video load status for debugging
+      const video = document.getElementById("bg-video");
+      if (video) {
+        video.addEventListener("error", (e) => {
+          console.error("Video failed to load:", e);
+        });
+        video.addEventListener("loadeddata", () => {
+          console.log("Video loaded successfully");
+        });
+      } else {
+        console.error("Video element not found");
+      }
+    });
+  </script>
 </MainLayout>
