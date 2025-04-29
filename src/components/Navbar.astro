@@ -28,14 +28,15 @@ import { NavData } from '../data/NavData';
       {NavData && NavData.length > 0 ? (
         NavData.map(item => (
           <li>
-            <a 
-              href={item.path} 
-              class="text-sm font-semibold transition-colors hover:underline focus:underline" 
-              style="color: var(--text-color);"
-              data-astro-transition="fade"
-            >
-              {item.name}
-            </a>
+          <a 
+  href={item.path}
+  class="box text-sm font-semibold"
+  style="color: var(--text-color);"
+  data-astro-transition="fade"
+>
+  {item.name}
+</a>
+
           </li>
         ))
       ) : (
@@ -53,14 +54,15 @@ import { NavData } from '../data/NavData';
       {NavData && NavData.length > 0 ? (
         NavData.map(item => (
           <li>
-            <a 
-              href={item.path} 
-              class="text-sm font-semibold transition-colors hover:underline focus:underline" 
-              style="color: var(--text-color);"
-              data-astro-transition="fade"
-            >
-              {item.name}
-            </a>
+           <a 
+  href={item.path}
+  class="box text-sm font-semibold"
+  style="color: var(--text-color);"
+  data-astro-transition="fade"
+>
+  {item.name}
+</a>
+
           </li>
         ))
       ) : (
@@ -79,4 +81,59 @@ import { NavData } from '../data/NavData';
   #mobile-menu:not(.hidden) {
     opacity: 1;
   }
+  .box {
+  width: auto;
+  padding: 10px 15px;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  text-transform: uppercase;
+  font-weight: 700;
+  transition: box-shadow 0.3s ease;
+}
+
+.box::before,
+.box::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  box-sizing: border-box;
+  transition: transform 0.3s linear, height 0.3s linear;
+}
+
+.box::before {
+  left: 0;
+  bottom: 0;
+  border-bottom: 4px solid transparent;
+  border-left: 4px solid transparent;
+  transform: translateX(100%);
+}
+
+.box::after {
+  top: 0;
+  left: 0;
+  border-top: 4px solid transparent;
+  border-right: 4px solid transparent;
+  transform: translateX(-100%);
+}
+
+.box:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.box:hover::before {
+  border-color:var(--text-color);
+  height: 100%;
+  transform: translateX(0);
+  transition: transform 0.3s linear, height 0.3s linear 0.3s;
+}
+
+.box:hover::after {
+  border-color:var(--text-color);
+  height: 100%;
+  transform: translateX(0);
+  transition: transform 0.3s linear, height 0.3s linear 0.6s;
+}
+
 </style>
