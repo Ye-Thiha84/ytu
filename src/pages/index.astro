@@ -13,6 +13,7 @@ import Navbar from "../components/Navbar.astro"
   showNavbar={false}
 >
   <style>
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+AU+SA:wght@100..400&display=swap');
     /* Define color variables for consistency */
     :global(:root) {
       --deep-blue: #1e40af; /* Adjusted for better harmony */
@@ -21,6 +22,10 @@ import Navbar from "../components/Navbar.astro"
       --dark-gray: #1f2937;
       --white: #ffffff;
       --light-gray: #d1d5db;
+    }
+    .navbar a.text-2xl {
+    color: var(--text-color) !important;
+    font-family: 'Playwrite AU SA', cursive; /* Added font-family */
     }
     /* Remove default body margins */
     body {
