@@ -6,9 +6,21 @@ import { fetchMajors } from "../../lib/fetchMajors";
 export async function getStaticPaths() {
   try {
     const majors = await fetchMajors();
-    return majors.map((major) => ({
-      params: { major: major.slug },
-    }));
+    if (!majors || majors.length === 0) {
+      console.warn("No majors found in getStaticPaths. Check Supabase connection or table data.");
+      return [];
+    }
+    const paths = majors.map((major) => {
+      if (!major.slug) {
+        console.warn("Major missing slug:", major);
+        return null;
+      }
+      return {
+        params: { major: major.slug },
+      };
+    }).filter(Boolean); // Remove any null entries
+    console.log("Generated static paths:", paths);
+    return paths;
   } catch (error) {
     console.error("Error fetching majors for static paths:", error.message);
     return [];
@@ -27,6 +39,7 @@ try {
   majorData = allMajors.find((m) => m.slug === major);
 
   if (!majorData) {
+    console.error(`Major with slug "${major}" not found in fetched data.`);
     return new Response(`Major with slug "${major}" not found`, { status: 404 });
   }
 } catch (err) {
@@ -34,40 +47,48 @@ try {
   return new Response(`Error fetching major: ${err.message}`, { status: 500 });
 }
 
-// Ensure key_topics and career_prospects are arrays
-const keyTopics = Array.isArray(majorData.key_topics) ? majorData.key_topics : [];
-const careerProspects = Array.isArray(majorData.career_prospects) ? majorData.career_prospects : [];
+const category = majorData.category || 'Uncategorized';
+const careerOpportunities = Array.isArray(majorData.career_opportunities) ? majorData.career_opportunities : [];
+const whyChoose = majorData.why_choose || 'No reason provided.';
+const formattedSlug = majorData.slug.charAt(0).toUpperCase() + majorData.slug.slice(1).replace(/-/g, ' ');
 ---
 
 <MainLayout>
   <section class="major-container">
-    <h1 class="major-title">{majorData.title}</h1>
+    <h1 class="major-title">{majorData.title || formattedSlug}</h1>
+    <p class="major-category">Category: {category.charAt(0).toUpperCase() + category.slice(1)}</p>
     <p class="major-description">{majorData.description || "No description available."}</p>
 
-    <div class="info-block">
-      <h2>Key Topics</h2>
-      {keyTopics.length > 0 ? (
-        <ul>
-          {keyTopics.map((topic) => (
-            <li>{topic}</li>
-          ))}
-        </ul>
-      ) : (
-        <p>No key topics available.</p>
-      )}
+    <div class="info-block card">
+      <div class="tools">
+        <div class="circle"><span class="box red"></span></div>
+        <div class="circle"><span class="box yellow"></span></div>
+        <div class="circle"><span class="box green"></span></div>
+      </div>
+      <div class="card-content">
+        <h2>Career Opportunities</h2>
+        {careerOpportunities.length > 0 ? (
+          <ul class="career-list">
+            {careerOpportunities.map((career) => (
+              <li>{career}</li>
+            ))}
+          </ul>
+        ) : (
+          <p class="no-data">No career opportunities available.</p>
+        )}
+      </div>
     </div>
 
-    <div class="info-block">
-      <h2>Career Prospects</h2>
-      {careerProspects.length > 0 ? (
-        <ul>
-          {careerProspects.map((career) => (
-            <li>{career}</li>
-          ))}
-        </ul>
-      ) : (
-        <p>No career prospects available.</p>
-      )}
+    <div class="info-block card">
+      <div class="tools">
+        <div class="circle"><span class="box red"></span></div>
+        <div class="circle"><span class="box yellow"></span></div>
+        <div class="circle"><span class="box green"></span></div>
+      </div>
+      <div class="card-content">
+        <h2>Why Choose This Major?</h2>
+        <p>{whyChoose}</p>
+      </div>
     </div>
 
     <a href="/maj" class="back-link">← Back to All Majors</a>
@@ -78,84 +99,272 @@ const careerProspects = Array.isArray(majorData.career_prospects) ? majorData.ca
       --text-color: #1a1a1a;
       --bg-color: #ffffff;
       --primary-color: #1a73e8;
-      --hover-color: #0c5fd3;
-      --card-bg: #f9f9f9;
-      --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      --hover-color: #0b5ed7;
+      --card-bg: #F8FBFE; /* From Uiverse.io card */
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      --science-bg: #e6f3ff;
+      --science-accent: #1a73e8;
+      --art-bg: #ffe6e6;
+      --art-accent: #ff6f61;
+      --border-color: #e0e0e0;
     }
 
     .major-container {
-      max-width: 760px;
+      max-width: 800px;
       margin: 0 auto;
-      padding: 3rem 1rem;
+      padding: 4rem 1rem;
       color: var(--text-color);
       background-color: var(--bg-color);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     .major-title {
-      font-size: 2.25rem;
+      font-size: 2.5rem;
+      font-weight: 700;
       text-align: center;
-      margin-bottom: 1rem;
-      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #2c3e50;
+    }
+
+    .major-category {
+      font-size: 1.25rem;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #666;
     }
 
     .major-description {
-      font-size: 1.125rem;
+      font-size: 1.1rem;
       line-height: 1.7;
-      color: #444;
+      color: #555;
       text-align: center;
       margin-bottom: 3rem;
-    }
-
-    .info-block {
-      background-color: var(--card-bg);
+      background-color: #ffffff;
       padding: 1.5rem;
-      border-radius: 10px;
-      margin-bottom: 2rem;
+      border-radius: 12px;
       box-shadow: var(--shadow);
     }
 
-    .info-block h2 {
+    /* Uiverse.io Card Styles */
+    .info-block.card {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 2rem auto;
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      z-index: 1;
+      position: relative;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .major-container:has(.major-category:where(:text("Science"))) .info-block.card {
+      border-left-color: var(--science-accent);
+    }
+
+    .major-container:has(.major-category:where(:text("Art"))) .info-block.card {
+      border-left-color: var(--art-accent);
+    }
+
+    .tools {
+      display: flex;
+      align-items: center;
+      padding: 9px;
+      background-color: #e8ecef;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
+    .circle {
+      padding: 0 4px;
+    }
+
+    .box {
+      display: inline-block;
+      align-items: center;
+      width: 10px;
+      height: 10px;
+      padding: 1px;
+      border-radius: 50%;
+    }
+
+    .red {
+      background-color: #ff605c;
+    }
+
+    .yellow {
+      background-color: #ffbd44;
+    }
+
+    .green {
+      background-color: #00ca4e;
+    }
+
+    .card-content {
+      padding: 1.5rem;
+    }
+
+    .card-content h2 {
       font-size: 1.5rem;
+      font-weight: 600;
       margin-bottom: 1rem;
       color: #2c3e50;
     }
 
-    .info-block ul {
-      padding-left: 1.5rem;
-      list-style-type: disc;
-      color: #333;
+    .career-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
     }
 
-    .info-block li {
+    .career-list li {
       font-size: 1rem;
-      margin-bottom: 0.5rem;
+      color: #333;
+      line-height: 1.6;
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .career-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--primary-color);
+      font-size: 1.2rem;
+    }
+
+    .major-container:has(.major-category:where(:text("Science"))) .career-list li::before {
+      color: var(--science-accent);
+    }
+
+    .major-container:has(.major-category:where(:text("Art"))) .career-list li::before {
+      color: var(--art-accent);
+    }
+
+    .card-content p {
+      font-size: 1rem;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .no-data {
+      font-size: 1rem;
+      color: #888;
+      font-style: italic;
     }
 
     .back-link {
-      display: block;
-      text-align: center;
-      margin-top: 2rem;
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background-color: var(--primary-color);
+      color: #ffffff;
       text-decoration: none;
       font-weight: 500;
-      color: var(--primary-color);
-      transition: color 0.2s ease;
+      border-radius: 6px;
+      transition: background-color 0.2s ease;
+      margin: 2rem auto;
+      display: block;
+      text-align: center;
+      width: fit-content;
     }
 
     .back-link:hover {
-      color: var(--hover-color);
+      background-color: var(--hover-color);
     }
 
-    @media (max-width: 500px) {
+    /* Category-specific background styling */
+    .major-container:has(.major-category:where(:text("Science"))) {
+      background-color: var(--science-bg);
+    }
+
+    .major-container:has(.major-category:where(:text("Art"))) {
+      background-color: var(--art-bg);
+    }
+
+    @media (max-width: 768px) {
       .major-title {
-        font-size: 1.75rem;
+        font-size: 2rem;
+      }
+
+      .major-category {
+        font-size: 1.125rem;
       }
 
       .major-description {
         font-size: 1rem;
+        padding: 1.25rem;
       }
 
-      .info-block h2 {
+      .info-block.card {
+        max-width: 100%;
+        margin-bottom: 1.5rem;
+      }
+
+      .card-content {
+        padding: 1.25rem;
+      }
+
+      .card-content h2 {
+        font-size: 1.4rem;
+      }
+
+      .career-list li,
+      .card-content p,
+      .no-data {
+        font-size: 0.95rem;
+      }
+
+      .back-link {
+        padding: 0.6rem 1.25rem;
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .major-container {
+        padding: 2rem 0.75rem;
+      }
+
+      .major-title {
+        font-size: 1.75rem;
+      }
+
+      .major-category {
+        font-size: 1rem;
+      }
+
+      .major-description {
+        font-size: 0.9rem;
+        padding: 1rem;
+      }
+
+      .card-content {
+        padding: 1rem;
+      }
+
+      .card-content h2 {
         font-size: 1.25rem;
+      }
+
+      .career-list li,
+      .card-content p,
+      .no-data {
+        font-size: 0.9rem;
+      }
+
+      .back-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .tools {
+        padding: 6px;
+      }
+
+      .box {
+        width: 8px;
+        height: 8px;
       }
     }
   </style>

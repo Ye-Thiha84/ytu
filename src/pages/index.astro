@@ -790,20 +790,6 @@ import Navbar from "../components/Navbar.astro"
   <!-- Smooth Scrolling and Animations Script -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const menuToggle = document.getElementById("menu-toggle");
-      const menu = document.getElementById("mobile-menu");
-      if (menuToggle && menu) {
-        menuToggle.addEventListener("click", () => {
-          console.log("Hamburger icon clicked");
-          const isExpanded =
-            menuToggle.getAttribute("aria-expanded") === "true";
-          menuToggle.setAttribute("aria-expanded", String(!isExpanded));
-          menu.classList.toggle("hidden");
-          document.body.style.overflow = isExpanded ? "auto" : "hidden";
-        });
-      } else {
-        console.error("Menu toggle or mobile menu element not found");
-      }
       // Smooth scrolling for down arrow
       const downArrow = document.querySelector(
         'a[href="#cards Obstetrics & Gynecology-section"]'

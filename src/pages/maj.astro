@@ -14,17 +14,19 @@ try {
 }
 
 // Split into categories
-const artsMajors = allMajors.filter((major) => major.category === "Arts");
-const scienceMajors = allMajors.filter((major) => major.category === "Science");
+const scienceMajors = allMajors.filter((major) => major.category === "science");
+const artMajors = allMajors.filter((major) => major.category === "art");
+const uncategorizedMajors = allMajors.filter((major) => !major.category || !['science', 'art'].includes(major.category));
 
 const totalMajors = allMajors.length;
-const totalArts = artsMajors.length;
 const totalScience = scienceMajors.length;
+const totalArt = artMajors.length;
+const totalUncategorized = uncategorizedMajors.length;
 ---
 
 <MainLayout>
   <section class="majors-container">
-    <h1>Majors at YU</h1>
+    <h1 class="main-title">Majors at YU</h1>
 
     {/* Display error if fetching fails */}
     {error ? (
@@ -33,120 +35,295 @@ const totalScience = scienceMajors.length;
       <>
         <p class="summary">
           YU offers a total of <strong>{totalMajors}</strong> majors:
-          <strong> {totalArts}</strong> from Arts and
-          <strong> {totalScience}</strong> from Science.
+          <strong>{totalScience}</strong> from Science,
+          <strong>{totalArt}</strong> from Art .
         </p>
 
-        <div class="category-section">
-          <h2>Arts Majors</h2>
-          <div class="card-grid">
-            {artsMajors.map((major) => (
-              <div class="card">
-                <h3>{major.title}</h3>
-                <p>{major.description || "No description available."}</p>
-                <a class="learn-more" href={`/majors/${major.slug}`}>Learn More →</a>
-              </div>
-            ))}
+        {/* Flex container for Science and Art majors */}
+        <div class="categories-wrapper">
+          <div class="category-section">
+            <h2 class="category-title">Science Majors</h2>
+            {scienceMajors.length > 0 ? (
+              <ul class="major-list">
+                {scienceMajors.map((major) => (
+                  <li class="major-item">
+                    <a href={`/majors/${major.slug}`} class="card-link">
+                      <div class="card">
+                        <div class="major-content">
+                          <span class="major-slug">{major.slug.charAt(0).toUpperCase() + major.slug.slice(1).replace(/-/g, ' ')}</span>
+                          <p class="major-description">{major.description || "No description available."}</p>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p class="empty-message">No Science majors available.</p>
+            )}
+          </div>
+
+          <div class="category-section">
+            <h2 class="category-title">Art Majors</h2>
+            {artMajors.length > 0 ? (
+              <ul class="major-list">
+                {artMajors.map((major) => (
+                  <li class="major-item">
+                    <a href={`/majors/${major.slug}`} class="card-link">
+                      <div class="card">
+                        <div class="major-content">
+                          <span class="major-slug">{major.slug.charAt(0).toUpperCase() + major.slug.slice(1).replace(/-/g, ' ')}</span>
+                          <p class="major-description">{major.description || "No description available."}</p>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p class="empty-message">No Art majors available.</p>
+            )}
           </div>
         </div>
 
-        <div class="category-section">
-          <h2>Science Majors</h2>
-          <div class="card-grid">
-            {scienceMajors.map((major) => (
-              <div class="card">
-                <h3>{major.title}</h3>
-                <p>{major.description || "No description available."}</p>
-                <a class="learn-more" href={`/majors/${major.slug}`}>Learn More →</a>
-              </div>
-            ))}
+        {uncategorizedMajors.length > 0 && (
+          <div class="category-section">
+            <h2 class="category-title">Uncategorized Majors</h2>
+            <ul class="major-list">
+              {uncategorizedMajors.map((major) => (
+                <li class="major-item">
+                  <a href={`/majors/${major.slug}`} class="card-link">
+                    <div class="card">
+                      <div class="major-content">
+                        <span class="major-slug">{major.slug.charAt(0).toUpperCase() + major.slug.slice(1).replace(/-/g, ' ')}</span>
+                        <p class="major-description">{major.description || "No description available."}</p>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
+        )}
       </>
     )}
   </section>
 
   <style>
     .majors-container {
-      max-width: 1000px;
+      max-width: 1200px; /* Increased to accommodate side-by-side layout */
       margin: 0 auto;
       padding: 3rem 1rem;
-      font-family: system-ui, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       color: #1a1a1a;
     }
 
-    h1 {
-      font-size: 2rem;
-      font-weight: 600;
+    .main-title {
+      font-size: 2.5rem;
+      font-weight: 700;
       text-align: center;
       margin-bottom: 1rem;
+      color: #2c3e50;
     }
 
     .summary {
       text-align: center;
-      color: #444;
-      font-size: 1rem;
+      color: #666;
+      font-size: 1.1rem;
+      margin-bottom: 3rem;
+    }
+
+    .categories-wrapper {
+      display: flex;
+      gap: 2rem;
       margin-bottom: 3rem;
     }
 
     .category-section {
-      margin-bottom: 3rem;
+      flex: 1; /* Equal width for Science and Art sections */
     }
 
-    .category-section h2 {
-      font-size: 1.5rem;
-      font-weight: 500;
+    .category-title {
+      font-size: 1.75rem;
+      font-weight: 600;
       margin-bottom: 1.5rem;
       color: #2c3e50;
+      position: relative;
+      display: inline-block;
     }
 
-    .card-grid {
+    .category-title::after {
+      content: '';
+      width: 50px;
+      height: 3px;
+      background-color: #1a73e8;
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+    }
+
+    .major-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.5rem;
+      gap: 1rem;
+      grid-template-columns: 1fr; /* Single column per category */
     }
 
+    .major-item {
+      position: relative;
+      padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+    }
+
+    .major-item::before {
+      content: '•';
+      position: absolute;
+      left: 0.75rem;
+      top: 1rem;
+      font-size: 1.5rem;
+      color: #888;
+    }
+
+    /* SteveBloX Card Styles */
     .card {
-      border: 1px solid #eee;
-      padding: 1.5rem;
-      border-radius: 8px;
-      background-color: #fafafa;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: box-shadow 0.2s;
+      box-sizing: border-box;
+      width: 100%;
+      background: rgba(217, 217, 217, 0.58);
+      border: 1px solid white;
+      box-shadow: 12px 17px 51px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(6px);
+      border-radius: 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.5s;
+      user-select: none;
+      font-weight: bolder;
+      color: black;
     }
 
     .card:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border: 1px solid black;
+      transform: scale(1.05);
     }
 
-    .card h3 {
-      font-size: 1.125rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      color: #1a1a1a;
+    .card:active {
+      transform: scale(0.95) rotateZ(1.7deg);
     }
 
-    .card p {
-      font-size: 0.95rem;
-      color: #555;
-      flex: 1;
-    }
-
-    .learn-more {
-      display: inline-block;
-      margin-top: 1rem;
-      color: #1a73e8;
+    .card-link {
       text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s;
+      color: inherit;
+      display: block;
     }
 
-    .learn-more:hover {
-      color: #0b5ed7;
-      text-decoration: underline;
+    .major-content {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .major-slug {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .major-description {
+      font-size: 0.95rem;
+      color: #666;
+      line-height: 1.5;
+      font-weight: normal;
+    }
+
+    .empty-message {
+      font-size: 1rem;
+      color: #666;
+      text-align: center;
+    }
+
+    /* Tablet and smaller desktop screens */
+    @media (max-width: 768px) {
+      .main-title {
+        font-size: 2rem;
+      }
+
+      .category-title {
+        font-size: 1.5rem;
+      }
+
+      .categories-wrapper {
+        flex-direction: column; /* Stack categories vertically */
+        gap: 1rem;
+      }
+
+      .major-item {
+        padding: 0.5rem 0.5rem 0.5rem 2.25rem;
+      }
+
+      .major-content {
+        padding: 1.25rem;
+      }
+
+      .major-slug {
+        font-size: 1.125rem;
+      }
+
+      .major-description {
+        font-size: 0.9rem;
+      }
+
+      .major-item::before {
+        top: 0.75rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Phone view */
+    @media (max-width: 500px) {
+      .main-title {
+        font-size: 1.75rem;
+      }
+
+      .summary {
+        font-size: 1rem;
+      }
+
+      .category-title {
+        font-size: 1.25rem;
+      }
+
+      .major-list {
+        grid-template-columns: 1fr; /* Single column for simplicity */
+        gap: 0.75rem;
+      }
+
+      .major-item {
+        padding: 0.5rem;
+      }
+
+      .major-item::before {
+        display: none; /* Remove bullet for cleaner mobile view */
+      }
+
+      .card {
+        width: 280px; /* Fixed width */
+        min-height: 200px; /* Fixed minimum height */
+        max-width: none; /* Override any max-width */
+      }
+
+      .major-content {
+        padding: 1rem;
+      }
+
+      .major-slug {
+        font-size: 1rem;
+      }
+
+      .major-description {
+        font-size: 0.85rem;
+      }
     }
   </style>
 </MainLayout>

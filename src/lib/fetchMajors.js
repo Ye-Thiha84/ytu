@@ -18,6 +18,9 @@ if (!supabaseUrl || !supabaseKey) {
 // Initialize Supabase client
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// Valid categories for validation
+const VALID_CATEGORIES = ["science", "art"];
+
 // Fetch all majors (Read)
 export async function fetchMajors() {
   try {
@@ -31,6 +34,35 @@ export async function fetchMajors() {
       throw new Error("Invalid data format: Expected an array of majors");
     }
 
+    // Validate category values and new fields
+    data.forEach((major) => {
+      // Validate category
+      if (major.category && !VALID_CATEGORIES.includes(major.category)) {
+        console.warn(
+          `Invalid category for major ${major.id}: ${major.category}`
+        );
+      }
+      // Validate career_opportunities
+      if (
+        major.career_opportunities &&
+        !Array.isArray(major.career_opportunities)
+      ) {
+        console.warn(
+          `Invalid career_opportunities for major ${
+            major.id
+          }: Expected an array, got ${typeof major.career_opportunities}`
+        );
+      }
+      // Validate why_choose
+      if (major.why_choose && typeof major.why_choose !== "string") {
+        console.warn(
+          `Invalid why_choose for major ${
+            major.id
+          }: Expected a string, got ${typeof major.why_choose}`
+        );
+      }
+    });
+
     console.log("Fetched majors:", data);
     return data;
   } catch (error) {
@@ -39,8 +71,27 @@ export async function fetchMajors() {
   }
 }
 
+// Create a new major (Create)
 export async function createMajor(newMajor) {
   try {
+    // Validate category
+    if (newMajor.category && !VALID_CATEGORIES.includes(newMajor.category)) {
+      throw new Error(
+        `Invalid category: Must be one of ${VALID_CATEGORIES.join(", ")}`
+      );
+    }
+    // Validate career_opportunities
+    if (
+      newMajor.career_opportunities &&
+      !Array.isArray(newMajor.career_opportunities)
+    ) {
+      throw new Error("career_opportunities must be an array");
+    }
+    // Validate why_choose
+    if (newMajor.why_choose && typeof newMajor.why_choose !== "string") {
+      throw new Error("why_choose must be a string");
+    }
+
     const { data, error } = await supabase
       .from("majors")
       .insert([newMajor])
@@ -60,6 +111,30 @@ export async function createMajor(newMajor) {
 // Update an existing major (Update)
 export async function updateMajor(id, updatedMajor) {
   try {
+    // Validate category
+    if (
+      updatedMajor.category &&
+      !VALID_CATEGORIES.includes(updatedMajor.category)
+    ) {
+      throw new Error(
+        `Invalid category: Must be one of ${VALID_CATEGORIES.join(", ")}`
+      );
+    }
+    // Validate career_opportunities
+    if (
+      updatedMajor.career_opportunities &&
+      !Array.isArray(updatedMajor.career_opportunities)
+    ) {
+      throw new Error("career_opportunities must be an array");
+    }
+    // Validate why_choose
+    if (
+      updatedMajor.why_choose &&
+      typeof updatedMajor.why_choose !== "string"
+    ) {
+      throw new Error("why_choose must be a string");
+    }
+
     const { data, error } = await supabase
       .from("majors")
       .update(updatedMajor)
