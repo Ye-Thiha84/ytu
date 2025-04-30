@@ -2,9 +2,6 @@
 import { Icon } from 'astro-icon/components';
 import { NavData } from '../data/NavData';
 ---
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Playwrite+AU+SA:wght@100..400&display=swap');
-</style>
 <nav aria-label="Primary">
   <div class="navbar flex items-center justify-between px-6 py-4 gap-4"> <!-- Added gap-4 -->
     <a href="/" class="text-2xl font-bold" id="cards-section" style="color: var(--text-color);" aria-label="Go home">
@@ -135,8 +132,4 @@ import { NavData } from '../data/NavData';
     transform: translateX(0);
     transition: transform 0.3s linear, height 0.3s linear 0.6s;
   }
-  .navbar a.text-2xl {
-    color: var(--text-color) !important;
-    font-family: 'Playwrite AU SA';
-  }
-</style>
+</>
