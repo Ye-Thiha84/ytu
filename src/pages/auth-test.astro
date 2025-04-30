@@ -10,8 +10,8 @@ if (sessionError) {
 }
 
 // Get environment variables to pass to client-side
-const SUPABASE_URL = import.meta.env.SUPABASE_URL;
-const SUPABASE_KEY = import.meta.env.SUPABASE_KEY;
+const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.PUBLIC_SUPABASE_KEY;
 ---
 
 <MainLayout title="Authentication Test" description="A page to test Supabase authentication">
