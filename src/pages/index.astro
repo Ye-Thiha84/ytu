@@ -132,7 +132,7 @@ import Navbar from "../components/Navbar.astro"
     /* Hero section styles */
     .hero-section {
       margin: 0;
-      padding: 0;
+      padding-top: 80px; /* Adjust based on navbar height */
       position: relative;
       height: 100vh;
       display: flex;
@@ -178,15 +178,15 @@ import Navbar from "../components/Navbar.astro"
     }
 
     .navbar {
-      background-color: transparent;
-      position: absolute;
+      background-color: rgba(30, 64, 175, 0.9); /* Semi-transparent background for visibility */
+      position: fixed; /* Changed from absolute to fixed */
       top: 0;
       left: 0;
       width: 100%;
-      z-index: 10;
+      z-index: 20; /* Increased z-index to ensure it stays on top */
       margin: 0;
+      padding: 1rem 0; /* Adjusted padding for better spacing */
     }
-
     #mobile-menu.hidden {
       display: none;
     }
@@ -542,18 +542,25 @@ import Navbar from "../components/Navbar.astro"
       color: var(--teal);
     }
     #mobile-menu {
+      position: fixed;
+      top: 70px; /* Adjust based on navbar height */
+      width: 100%;
+      background-color: var(--deep-blue);
+      z-index: 10;
       transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
     }
     #mobile-menu.hidden {
       display: none !important;
     }
     #mobile-menu:not(.hidden) {
-      display: block !important;
       transform: translateX(0);
     }
-  </style>
+    </style>
 
-  <!-- Hero Section -->
+<!-- Hero Section -->
+
+<Navbar /> 
   <section class="hero-section section">
     <video autoplay loop muted playsinline class="bg-video" id="bg-video">
       <source src="/images/YUBG.mp4" type="video/mp4" />
@@ -611,7 +618,6 @@ import Navbar from "../components/Navbar.astro"
       </svg>
     </a>
   </section>
-   <Navbar /> 
   <!-- Cards Section -->
   <section id="cards-section" class="cards-section section py-16 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
