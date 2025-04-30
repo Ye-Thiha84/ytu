@@ -1,0 +1,146 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import { supabase } from '../lib/supabase';
+
+// Get the current user session (server-side)
+const { data: { user }, error: sessionError } = await supabase.auth.getUser();
+
+if (sessionError) {
+  console.error('Error fetching user session:', sessionError.message);
+}
+
+// Get environment variables to pass to client-side
+const SUPABASE_URL = import.meta.env.SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.SUPABASE_KEY;
+---
+
+<MainLayout title="Authentication Test" description="A page to test Supabase authentication">
+  <section class="container mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">Supabase Authentication Test</h1>
+
+    <!-- Display user status -->
+    <div class="mb-6 text-center">
+      {user ? (
+        <div>
+          <p class="text-green-500">Logged in as: {user.email}</p>
+          <button id="signout-btn" class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+            Sign Out
+          </button>
+        </div>
+      ) : (
+        <p class="text-gray-500">Not logged in.</p>
+      )}
+    </div>
+
+    <!-- Authentication form (only shown if not logged in) -->
+    {user ? null : (
+      <div class="max-w-md mx-auto bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4 text-center">Sign In / Sign Up</h2>
+        <div class="space-y-4">
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              id="email"
+              type="email"
+              class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
+              placeholder="your@email.com"
+            />
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              id="password"
+              type="password"
+              class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
+              placeholder="********"
+            />
+          </div>
+          <div class="flex space-x-4">
+            <button
+              id="signup-btn"
+              class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Sign Up
+            </button>
+            <button
+              id="signin-btn"
+              class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Sign In
+            </button>
+          </div>
+        </div>
+        <p id="auth-error" class="text-red-500 text-center mt-4 hidden"></p>
+        <p id="auth-success" class="text-green-500 text-center mt-4 hidden"></p>
+      </div>
+    )}
+  </section>
+
+  <!-- Client-side JavaScript for authentication -->
+  <script define:vars={{ SUPABASE_URL, SUPABASE_KEY }}>
+    import { createSupabaseClient } from '../lib/supabase';
+
+    // Initialize Supabase client on the client-side
+    const supabase = createSupabaseClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const showError = (message) => {
+      const errorEl = document.getElementById('auth-error');
+      errorEl.textContent = message;
+      errorEl.classList.remove('hidden');
+      document.getElementById('auth-success').classList.add('hidden');
+    };
+
+    const showSuccess = (message) => {
+      const successEl = document.getElementById('auth-success');
+      successEl.textContent = message;
+      successEl.classList.remove('hidden');
+      document.getElementById('auth-error').classList.add('hidden');
+    };
+
+    // Sign Up
+    document.getElementById('signup-btn').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        showError(`Sign-up failed: ${error.message}`);
+      } else {
+        showSuccess('Sign-up successful! Check your email for confirmation (if enabled).');
+        setTimeout(() => window.location.reload(), 2000);
+      }
+    });
+
+    // Sign In
+    document.getElementById('signin-btn').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        showError(`Sign-in failed: ${error.message}`);
+      } else {
+        showSuccess('Sign-in successful!');
+        setTimeout(() => window.location.reload(), 1000);
+      }
+    });
+
+    // Sign Out
+    document.getElementById('signout-btn')?.addEventListener('click', async () => {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        alert(`Sign-out failed: ${error.message}`);
+      } else {
+        window.location.reload();
+      }
+    });
+  </script>
+</MainLayout>

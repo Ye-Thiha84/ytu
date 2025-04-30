@@ -1,0 +1,30 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import { supabase } from '../lib/supabase';
+
+// Fetch data from the 'majors' table
+const { data: majors, error } = await supabase
+  .from('majors')
+  .select('title');
+---
+
+<MainLayout title="Testing Database Connection" description="A page to test the Supabase database connection">
+  <section class="container mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">Testing Database Connection</h1>
+    
+    {error ? (
+      <p class="text-center text-red-500">Error connecting to database: {error.message}</p>
+    ) : majors?.length > 0 ? (
+      <div>
+        <p class="text-center text-green-500 mb-4">Successfully connected to the database!</p>
+        <ul class="list-disc pl-6">
+          {majors.map((major) => (
+            <li key={major.title} class="text-gray-800">{major.title}</li>
+          ))}
+        </ul>
+      </div>
+    ) : (
+      <p class="text-center text-gray-500">No majors found in the database.</p>
+    )}
+  </section>
+</MainLayout>
