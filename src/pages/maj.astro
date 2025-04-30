@@ -1,15 +1,16 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import supabase from '../utils/supabaseClient.js';
+import { fetchMajors } from "../lib/fetchMajors";
 
 // Fetch all majors with descriptions
-const { data: allMajors, error } = await supabase
-  .from('majors')
-  .select('slug, title, category, description');
+let allMajors = [];
+let error = null;
 
-if (error) {
-  console.error('Error fetching majors:', error);
-  return new Response("Error fetching majors", { status: 500 });
+try {
+  allMajors = await fetchMajors();
+} catch (err) {
+  console.error('Error fetching majors:', err);
+  error = "Failed to load majors. Please try again later.";
 }
 
 // Split into categories
@@ -24,37 +25,45 @@ const totalScience = scienceMajors.length;
 <MainLayout>
   <section class="majors-container">
     <h1>Majors at YU</h1>
-    <p class="summary">
-      YU offers a total of <strong>{totalMajors}</strong> majors:
-      <strong> {totalArts}</strong> from Arts and
-      <strong> {totalScience}</strong> from Science.
-    </p>
 
-    <div class="category-section">
-      <h2>Arts Majors</h2>
-      <div class="card-grid">
-        {artsMajors.map((major) => (
-          <div class="card">
-            <h3>{major.title}</h3>
-            <p>{major.description || "No description available."}</p>
-            <a class="learn-more" href={`/majors/${major.slug}`}>Learn More →</a>
-          </div>
-        ))}
-      </div>
-    </div>
+    {/* Display error if fetching fails */}
+    {error ? (
+      <p class="summary text-red-500">{error}</p>
+    ) : (
+      <>
+        <p class="summary">
+          YU offers a total of <strong>{totalMajors}</strong> majors:
+          <strong> {totalArts}</strong> from Arts and
+          <strong> {totalScience}</strong> from Science.
+        </p>
 
-    <div class="category-section">
-      <h2>Science Majors</h2>
-      <div class="card-grid">
-        {scienceMajors.map((major) => (
-          <div class="card">
-            <h3>{major.title}</h3>
-            <p>{major.description || "No description available."}</p>
-            <a class="learn-more" href={`/majors/${major.slug}`}>Learn More →</a>
+        <div class="category-section">
+          <h2>Arts Majors</h2>
+          <div class="card-grid">
+            {artsMajors.map((major) => (
+              <div class="card">
+                <h3>{major.title}</h3>
+                <p>{major.description || "No description available."}</p>
+                <a class="learn-more" href={`/majors/${major.slug}`}>Learn More →</a>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
+
+        <div class="category-section">
+          <h2>Science Majors</h2>
+          <div class="card-grid">
+            {scienceMajors.map((major) => (
+              <div class="card">
+                <h3>{major.title}</h3>
+                <p>{major.description || "No description available."}</p>
+                <a class="learn-more" href={`/majors/${major.slug}`}>Learn More →</a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    )}
   </section>
 
   <style>

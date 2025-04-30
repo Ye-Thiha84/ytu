@@ -1,52 +1,73 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
-import supabase from "../../utils/supabaseClient.js";
+import { fetchMajors } from "../../lib/fetchMajors";
 
+// Fetch all majors' slugs for static paths
 export async function getStaticPaths() {
-  const { data: majors, error } = await supabase.from("majors").select("slug");
-
-  if (error) {
-    console.error("Error fetching majors for static paths:", error);
+  try {
+    const majors = await fetchMajors();
+    return majors.map((major) => ({
+      params: { major: major.slug },
+    }));
+  } catch (error) {
+    console.error("Error fetching majors for static paths:", error.message);
     return [];
   }
-
-  return majors.map((major) => ({
-    params: { major: major.slug },
-  }));
 }
 
 // Params
 const { major } = Astro.params;
 
 // Fetch specific major
-const { data: majorData, error } = await supabase
-  .from("majors")
-  .select("*")
-  .eq("slug", major)
-  .single();
+let majorData = null;
+let error = null;
 
-if (error || !majorData) {
-  return new Response("Major not found", { status: 404 });
+try {
+  const allMajors = await fetchMajors();
+  majorData = allMajors.find((m) => m.slug === major);
+
+  if (!majorData) {
+    return new Response(`Major with slug "${major}" not found`, { status: 404 });
+  }
+} catch (err) {
+  console.error(`Error fetching major with slug "${major}":`, err.message);
+  return new Response(`Error fetching major: ${err.message}`, { status: 500 });
 }
+
+// Ensure key_topics and career_prospects are arrays
+const keyTopics = Array.isArray(majorData.key_topics) ? majorData.key_topics : [];
+const careerProspects = Array.isArray(majorData.career_prospects) ? majorData.career_prospects : [];
 ---
 
 <MainLayout>
   <section class="major-container">
     <h1 class="major-title">{majorData.title}</h1>
-    <p class="major-description">{majorData.description}</p>
+    <p class="major-description">{majorData.description || "No description available."}</p>
 
     <div class="info-block">
       <h2>Key Topics</h2>
-      <ul>
-        {majorData.key_topics.map((topic: string) => <li>{topic}</li>)}
-      </ul>
+      {keyTopics.length > 0 ? (
+        <ul>
+          {keyTopics.map((topic) => (
+            <li>{topic}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>No key topics available.</p>
+      )}
     </div>
 
     <div class="info-block">
       <h2>Career Prospects</h2>
-      <ul>
-        {majorData.career_prospects.map((career: string) => <li>{career}</li>)}
-      </ul>
+      {careerProspects.length > 0 ? (
+        <ul>
+          {careerProspects.map((career) => (
+            <li>{career}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>No career prospects available.</p>
+      )}
     </div>
 
     <a href="/maj" class="back-link">← Back to All Majors</a>
