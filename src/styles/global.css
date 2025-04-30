@@ -1,20 +1,27 @@
 @import "tailwindcss";
 body {
-    font-family: 'Montserrat', sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
-    background-color: black; /* Matches your requirement for a black background */
-    color: white; /* Ensures text visibility on black background */
-  }
-  
-  /* Optional: Style headings and body text explicitly */
-  h1, h2, h3 {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700; /* Bold for headings, matching Harvard's style */
-  }
-  
-  p, a {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 400; /* Regular for body text */
-    line-height: 1.5; /* Matches the line-height from the Harvard webpage */
-  }
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  background-color: rgb(
+    255,
+    255,
+    255
+  ); /* Matches your requirement for a black background */
+  color: white; /* Ensures text visibility on black background */
+}
+
+/* Optional: Style headings and body text explicitly */
+h1,
+h2,
+h3 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700; /* Bold for headings, matching Harvard's style */
+}
+
+p,
+a {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400; /* Regular for body text */
+  line-height: 1.5; /* Matches the line-height from the Harvard webpage */
+}
