@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchMajors, createMajor, updateMajor, deleteMajor } from '../lib/fetchMajors';
+import "../styles/global.css";
 
 const MajorManager = () => {
   const [majors, setMajors] = useState([]);
@@ -80,14 +81,14 @@ const MajorManager = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto bg-white text-black">
       <h1 className="text-2xl font-bold mb-4">Manage Majors</h1>
 
       {/* Error Message */}
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+      {error && <div className="text-black mb-4">{error}</div>}
 
       {/* Add New Major Form */}
-      <div className="mb-6 p-4 bg-gray-100 rounded">
+      <div className="mb-6 p-4 bg-white rounded">
         <h2 className="text-lg font-semibold mb-2">Add New Major</h2>
         <div>
           <div className="mb-2">
@@ -97,7 +98,7 @@ const MajorManager = () => {
               name="slug"
               value={newMajor.slug}
               onChange={handleInputChange}
-              className="border p-2 w-full rounded"
+              className="border p-2 w-full rounded text-black"
               placeholder="Enter slug"
             />
           </div>
@@ -107,13 +108,13 @@ const MajorManager = () => {
               name="description"
               value={newMajor.description}
               onChange={handleInputChange}
-              className="border p-2 w-full rounded"
+              className="border p-2 w-full rounded text-black"
               placeholder="Enter description"
             />
           </div>
           <button
             onClick={handleAddMajor}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="bg-blue-500 text-black px-4 py-2 rounded hover:bg-blue-600"
           >
             Add Major
           </button>
@@ -122,7 +123,7 @@ const MajorManager = () => {
 
       {/* Edit Major Form (shown when editingMajor is set) */}
       {editingMajor && (
-        <div className="mb-6 p-4 bg-gray-100 rounded">
+        <div className="mb-6 p-4 bg-white rounded">
           <h2 className="text-lg font-semibold mb-2">Edit Major</h2>
           <div>
             <div className="mb-2">
@@ -132,7 +133,7 @@ const MajorManager = () => {
                 name="slug"
                 value={editingMajor.slug}
                 onChange={handleEditInputChange}
-                className="border p-2 w-full rounded"
+                className="border p-2 w-full rounded text-black"
                 placeholder="Enter slug"
               />
             </div>
@@ -142,20 +143,20 @@ const MajorManager = () => {
                 name="description"
                 value={editingMajor.description}
                 onChange={handleEditInputChange}
-                className="border p-2 w-full rounded"
+                className="border p-2 w-full rounded text-black"
                 placeholder="Enter description"
               />
             </div>
             <div className="flex gap-2">
               <button
                 onClick={handleSaveEdit}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                className="bg-green-500 text-black px-4 py-2 rounded hover:bg-green-600"
               >
                 Save
               </button>
               <button
                 onClick={() => setEditingMajor(null)}
-                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                className="bg-gray-500 text-black px-4 py-2 rounded hover:bg-gray-600"
               >
                 Cancel
               </button>
@@ -167,7 +168,7 @@ const MajorManager = () => {
       {/* Majors Table */}
       <table className="w-full border-collapse">
         <thead>
-          <tr className="bg-gray-200">
+          <tr className="bg-white">
             <th className="border p-2 text-left">Slug</th>
             <th className="border p-2 text-left">Description</th>
             <th className="border p-2 text-left">Actions</th>
@@ -182,13 +183,13 @@ const MajorManager = () => {
                 <td className="border p-2 flex gap-2">
                   <button
                     onClick={() => handleEditMajor(major)}
-                    className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                    className="bg-yellow-500 text-black px-3 py-1 rounded hover:bg-yellow-600"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDeleteMajor(major.id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                    className="bg-red-500 text-black px-3 py-1 rounded hover:bg-red-600"
                   >
                     Delete
                   </button>

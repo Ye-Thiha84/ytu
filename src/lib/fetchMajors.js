@@ -39,7 +39,6 @@ export async function fetchMajors() {
   }
 }
 
-// Create a new major (Create)
 export async function createMajor(newMajor) {
   try {
     const { data, error } = await supabase
@@ -47,6 +46,7 @@ export async function createMajor(newMajor) {
       .insert([newMajor])
       .select();
     if (error) {
+      console.error("Supabase insert error details:", error);
       throw new Error(`Supabase error: ${error.message}`);
     }
     console.log("Created major:", data);
